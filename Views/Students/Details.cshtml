@@ -1,61 +1,79 @@
 ﻿@model UniversityPortal.Models.Student
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Student Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Details</h1>
+<style>
+    body {
+        background-color: #F1F0E8;
+        color: #213555;
+    }
 
-<div>
-    <h4>Student</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StudentId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StudentId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FirstName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FirstName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.LastName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.LastName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EnrollmentDate)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EnrollmentDate)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AcquiredCredits)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AcquiredCredits)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CurrentSemester)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CurrentSemester)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.EducationLevel)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.EducationLevel)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    h1, h4 {
+        color: #213555;
+        margin-bottom: 20px;
+    }
+
+    .details-box {
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    dt {
+        font-weight: 600;
+        color: #3E5879;
+    }
+
+    dd {
+        margin-bottom: 15px;
+    }
+
+    .btn-custom {
+        background-color: #213555;
+        color: #F1F0E8;
+        border: none;
+        transition: background-color 0.3s ease;
+        margin-right: 10px;
+    }
+
+        .btn-custom:hover {
+            background-color: #3E5879;
+            color: #F1F0E8;
+        }
+</style>
+
+<div class="container mt-4">
+    <h2>🎓 Student Details</h2>
+    <div class="d-flex justify-content-between mt-4">
+        <a asp-action="Index" class="btn btn-outline-secondary">← Back to List</a>
+        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom"><i class="fas fa-edit"></i> Edit</a>
+    </div>
+    <div class="details-box mt-3">
+        <dl class="row">
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.StudentId)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.StudentId)</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FirstName)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.FirstName)</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.LastName)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.LastName)</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.EnrollmentDate)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.EnrollmentDate)</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.AcquiredCredits)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.AcquiredCredits)</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.CurrentSemester)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.CurrentSemester)</dd>
+
+            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.EducationLevel)</dt>
+            <dd class="col-sm-9">@Html.DisplayFor(model => model.EducationLevel)</dd>
+        </dl>
+    </div>
 </div>

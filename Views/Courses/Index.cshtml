@@ -1,72 +1,99 @@
 ﻿@model IEnumerable<UniversityPortal.Models.Course>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Courses";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<style>
+    body {
+        background-color: #F1F0E8;
+        color: #213555;
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Credits)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Semester)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Programme)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EducationLevel)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstTeacher)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.SecondTeacher)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Credits)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Semester)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Programme)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EducationLevel)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstTeacher.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SecondTeacher.FirstName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    h2 {
+        color: #213555;
+        margin-bottom: 30px;
+    }
+
+    .btn-custom {
+        background-color: #213555;
+        color: #F1F0E8;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-custom:hover {
+            background-color: #3E5879;
+        }
+
+    .course-card {
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .course-details {
+        flex: 1;
+    }
+
+    .course-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
+
+    .course-meta {
+        font-size: 0.9rem;
+        color: #555;
+    }
+
+    .action-links a {
+        margin-left: 15px;
+        color: #213555;
+        text-decoration: none;
+        font-size: 0.9rem;
+    }
+
+        .action-links a:hover {
+            color: #3E5879;
+            text-decoration: underline;
+        }
+
+    .add-button {
+        margin-bottom: 20px;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Courses</h2>
+        <a asp-action="Create" class="btn btn-custom add-button">➕ Add New Course</a>
+    </div>
+
+    <div class="row">
+        @foreach (var course in Model)
+        {
+            <div class="col-md-6">
+                <div class="course-card">
+                    <div class="course-details">
+                        <div class="course-title">@course.Title</div>
+                        <div class="course-meta">
+                            Credits: @course.Credits | Semester: @course.Semester
+                        </div>
+                    </div>
+                    <div class="action-links">
+                        <a asp-action="Edit" asp-route-id="@course.Id"><i class="fas fa-edit"></i></a>
+                        <a asp-action="Details" asp-route-id="@course.Id"><i class="fas fa-info-circle"></i></a>
+                        <a asp-action="Delete" asp-route-id="@course.Id"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

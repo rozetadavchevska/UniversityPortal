@@ -20,7 +20,7 @@
         }
 
         .sidebar {
-            width: 250px;
+            width: 200px;
             height: 100vh;
             position: fixed;
             top: 0;
@@ -43,7 +43,7 @@
                 }
 
         .content {
-            margin-left: 250px;
+            margin-left: 200px;
             padding: 20px;
             flex: 1;
         }
@@ -86,16 +86,19 @@
     </header>
 
     <!-- Sidebar -->
-    <div class="sidebar position-fixed">
-        <a asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home me-2"></i>Dashboard</a>
-        <a asp-area="" asp-controller="Students" asp-action="Index"><i class="fas fa-user-graduate me-2"></i>Students</a>
-        <a asp-area="" asp-controller="Teachers" asp-action="Index"><i class="fas fa-chalkboard-teacher me-2"></i>Teachers</a>
-        <a asp-area="" asp-controller="Courses" asp-action="Index"><i class="fas fa-book me-2"></i>Courses</a>
-        <a asp-area="" asp-controller="Enrollments" asp-action="Index"><i class="fas fa-file-alt me-2"></i>Enrollments</a>
-    </div>
+    @if (User.Identity.IsAuthenticated)
+    {
+        <div class="sidebar position-fixed">
+            <a asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home me-2"></i>Dashboard</a>
+            <a asp-area="" asp-controller="Students" asp-action="Index"><i class="fas fa-user-graduate me-2"></i>Students</a>
+            <a asp-area="" asp-controller="Teachers" asp-action="Index"><i class="fas fa-chalkboard-teacher me-2"></i>Teachers</a>
+            <a asp-area="" asp-controller="Courses" asp-action="Index"><i class="fas fa-book me-2"></i>Courses</a>
+            <a asp-area="" asp-controller="Enrollments" asp-action="Index"><i class="fas fa-file-alt me-2"></i>Enrollments</a>
+        </div>
+    }
 
     <!-- Main Content -->
-    <div class="content pt-5 mt-4">
+    <div class="content pt-5 mt-4 @(User.Identity.IsAuthenticated ? "" : "ms-0")" style="@(User.Identity.IsAuthenticated ? "" : "margin-left: 0")">
         <main role="main">
             @RenderBody()
         </main>

@@ -1,66 +1,103 @@
 ﻿@model IEnumerable<UniversityPortal.Models.Teacher>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Teachers";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Index</h1>
+<style>
+    body {
+        background-color: #F1F0E8;
+        color: #213555;
+    }
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.FirstName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Degree)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.AcademicRank)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.OfficeNumber)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.HireDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.FirstName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Degree)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.AcademicRank)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OfficeNumber)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.HireDate)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+    h1 {
+        color: #213555;
+        margin-bottom: 30px;
+    }
+
+    .btn-custom {
+        background-color: #213555;
+        color: #F1F0E8;
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+
+        .btn-custom:hover {
+            background-color: #3E5879;
+            color: #F1F0E8;
+        }
+
+    .table {
+        background-color: #ffffff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+        .table thead {
+            background-color: #213555;
+            color: #F1F0E8;
+        }
+
+        .table tbody tr:hover {
+            background-color: #F1F0E8;
+        }
+
+        .table td, .table th {
+            vertical-align: middle;
+        }
+
+    .action-links a {
+        margin-right: 10px;
+        color: #213555;
+        text-decoration: none;
+        transition: color 0.2s ease;
+    }
+
+        .action-links a:hover {
+            color: #3E5879;
+            text-decoration: underline;
+        }
+</style>
+
+<div class="container mt-4">
+    <div class="d-flex justify-content-between">
+        <h2 class="text-start">Teachers</h2>
+        <p>
+            <a asp-action="Create" class="btn btn-custom mb-3">➕ Add New Teacher</a>
+        </p>
+    </div>
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.First().FirstName)</th>
+                <th>@Html.DisplayNameFor(model => model.First().LastName)</th>
+                <th>@Html.DisplayNameFor(model => model.First().Degree)</th>
+                <th>@Html.DisplayNameFor(model => model.First().AcademicRank)</th>
+                <th>@Html.DisplayNameFor(model => model.First().OfficeNumber)</th>
+                <th>@Html.DisplayNameFor(model => model.First().HireDate)</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.LastName)</td>
+                    <td>@Html.DisplayFor(modelItem => item.Degree)</td>
+                    <td>@Html.DisplayFor(modelItem => item.AcademicRank)</td>
+                    <td>@Html.DisplayFor(modelItem => item.OfficeNumber)</td>
+                    <td>@Html.DisplayFor(modelItem => item.HireDate)</td>
+                    <td class="action-links text-center">
+                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-edit"></i> Edit</a>
+                        <a asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-info-circle"></i> Details</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id"><i class="fas fa-trash"></i> Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

@@ -1,65 +1,105 @@
 ﻿@model UniversityPortal.Models.Student
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Student";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h1>Edit</h1>
+<style>
+    body {
+        background-color: #F1F0E8;
+        color: #213555;
+    }
 
-<h4>Student</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
+    h1, h4 {
+        color: #213555;
+        margin-bottom: 20px;
+    }
+
+    .form-container {
+        background-color: #ffffff;
+        border-radius: 10px;
+        padding: 30px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    }
+
+    .form-group label {
+        font-weight: 600;
+    }
+
+    .btn-custom {
+        background-color: #213555;
+        color: #F1F0E8;
+        border: none;
+        transition: background-color 0.3s ease;
+        margin-right: 10px;
+    }
+
+        .btn-custom:hover {
+            background-color: #3E5879;
+            color: #F1F0E8;
+        }
+</style>
+
+<div class="container mt-4">
+    <h2>✏️ Edit Student</h2>
+    <div class="form-container mt-3">
         <form asp-action="Edit">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="StudentId" class="control-label"></label>
                 <input asp-for="StudentId" class="form-control" />
                 <span asp-validation-for="StudentId" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="FirstName" class="control-label"></label>
                 <input asp-for="FirstName" class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="LastName" class="control-label"></label>
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="EnrollmentDate" class="control-label"></label>
                 <input asp-for="EnrollmentDate" class="form-control" />
                 <span asp-validation-for="EnrollmentDate" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="AcquiredCredits" class="control-label"></label>
                 <input asp-for="AcquiredCredits" class="form-control" />
                 <span asp-validation-for="AcquiredCredits" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-3">
                 <label asp-for="CurrentSemester" class="control-label"></label>
                 <input asp-for="CurrentSemester" class="form-control" />
                 <span asp-validation-for="CurrentSemester" class="text-danger"></span>
             </div>
-            <div class="form-group">
+
+            <div class="form-group mb-4">
                 <label asp-for="EducationLevel" class="control-label"></label>
                 <input asp-for="EducationLevel" class="form-control" />
                 <span asp-validation-for="EducationLevel" class="text-danger"></span>
             </div>
+
             <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+                <input type="submit" value="Save Changes" class="btn btn-custom" />
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
             </div>
         </form>
     </div>
 </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
