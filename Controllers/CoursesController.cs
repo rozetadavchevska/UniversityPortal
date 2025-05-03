@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using UniversityPortal.Areas.Identity.Data;
 using UniversityPortal.Models;
+using UniversityPortal.ViewModels;
 
 namespace UniversityPortal.Controllers
 {
@@ -20,10 +21,30 @@ namespace UniversityPortal.Controllers
         }
 
         // GET: Courses
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(CourseFilterViewModel filter)
         {
-            var applicationDbContext = _context.Courses.Include(c => c.FirstTeacher).Include(c => c.SecondTeacher);
-            return View(await applicationDbContext.ToListAsync());
+            var courses = _context.Courses.AsQueryable();
+
+            if (!string.IsNullOrEmpty(filter.Title))
+            {
+                courses = courses.Where(c => c.Title.Contains(filter.Title));
+            }
+
+            if (filter.Semester.HasValue)
+            {
+                courses = courses.Where(s => s.Semester == filter.Semester);
+            }
+
+            if(!string.IsNullOrEmpty(filter.Programme))
+            {
+                courses = courses.Where(c => c.Programme.Contains(filter.Programme));
+            }
+
+            var coursesList = await courses.ToListAsync();
+
+            filter.Courses = coursesList;
+
+            return View(filter);
         }
 
         // GET: Courses/Details/5
