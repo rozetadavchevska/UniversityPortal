@@ -1,7 +1,7 @@
 ﻿@model UniversityPortal.Models.Teacher
 
 @{
-    ViewData["Title"] = "Teacher Details";
+    ViewData["Title"] = $"{Model.FirstName} {Model.LastName}";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
@@ -11,55 +11,115 @@
         color: #213555;
     }
 
-    h1, h4 {
-        color: #213555;
-        margin-bottom: 20px;
+    .profile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 30px;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
-    .details-box {
-        background-color: #ffffff;
-        border-radius: 10px;
-        padding: 30px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    .profile-name {
+        flex: 1;
+        text-align: center;
     }
 
-    dt {
-        font-weight: 600;
-        color: #3E5879;
-    }
+        .profile-name h1 {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 0;
+            color: #213555;
+        }
 
-    dd {
-        margin-bottom: 15px;
+    .left-action,
+    .right-action {
+        flex: 0 0 auto;
     }
 
     .btn-custom {
         background-color: #213555;
         color: #F1F0E8;
         border: none;
+        padding: 8px 18px;
         transition: background-color 0.3s ease;
-        margin-right: 10px;
+        font-size: 0.95rem;
     }
 
         .btn-custom:hover {
             background-color: #3E5879;
             color: #F1F0E8;
         }
+
+
+    .info-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        padding: 30px;
+        margin-top: 30px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    }
+
+    .info-list dt {
+        font-weight: 600;
+        color: #3E5879;
+        width: 180px;
+    }
+
+    .info-list dd {
+        margin-bottom: 15px;
+    }
+
+    .courses-section {
+        margin-top: 40px;
+    }
+
+    .course-item {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+    }
+
+    .course-link {
+        text-decoration: none;
+        color: #213555;
+        font-weight: 500;
+    }
+
+        .course-link:hover {
+            text-decoration: underline;
+            color: #3E5879;
+        }
+
+    .badge-role {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+        border-radius: 50px;
+    }
 </style>
 
-<div class="container mt-4">
-    <h2>👨‍🏫 Teacher Details</h2>
-    <div class="d-flex justify-content-between mt-4">
-        <a asp-action="Index" class="btn btn-outline-secondary">← Back to List</a>
-        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom"><i class="fas fa-edit"></i> Edit</a>
+<div class="container">
+    <div class="profile-header">
+        <div class="left-action">
+            <a asp-action="Index" class="btn btn-outline-secondary">← Back</a>
+        </div>
+        <div class="profile-name">
+            <h1>@Model.FirstName @Model.LastName</h1>
+        </div>
+        <div class="right-action">
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom">Edit</a>
+        </div>
     </div>
-    <div class="details-box mt-3">
-        <dl class="row">
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FirstName)</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.FirstName)</dd>
 
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.LastName)</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.LastName)</dd>
 
+    <div class="info-card">
+        <dl class="row info-list">
             <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Degree)</dt>
             <dd class="col-sm-9">@Html.DisplayFor(model => model.Degree)</dd>
 
@@ -72,5 +132,31 @@
             <dt class="col-sm-3">@Html.DisplayNameFor(model => model.HireDate)</dt>
             <dd class="col-sm-9">@Html.DisplayFor(model => model.HireDate)</dd>
         </dl>
+    </div>
+
+    <div class="courses-section">
+        <h4>Courses Taught</h4>
+
+        @if ((Model.FirstTeacherCourses?.Any() ?? false) || (Model.SecondTeacherCourses?.Any() ?? false))
+        {
+            @foreach (var course in Model.FirstTeacherCourses)
+            {
+                <div class="course-item">
+                    <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id" class="course-link">@course.Title</a>
+                    <span class="badge bg-primary badge-role">Lead Instructor</span>
+                </div>
+            }
+            @foreach (var course in Model.SecondTeacherCourses)
+            {
+                <div class="course-item">
+                    <a asp-controller="Courses" asp-action="Details" asp-route-id="@course.Id" class="course-link">@course.Title</a>
+                    <span class="badge bg-secondary badge-role">Co-Instructor</span>
+                </div>
+            }
+        }
+        else
+        {
+            <p class="text-muted mt-3">This teacher is not assigned to any courses yet.</p>
+        }
     </div>
 </div>

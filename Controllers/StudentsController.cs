@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using UniversityPortal.Areas.Identity.Data;
 using UniversityPortal.Models;
+using UniversityPortal.ViewModels;
 
 namespace UniversityPortal.Controllers
 {
@@ -22,9 +23,30 @@ namespace UniversityPortal.Controllers
         }
 
         // GET: Students
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(StudentFilterViewModel filter)
         {
-            return View(await _context.Students.ToListAsync());
+            var students = _context.Students.AsQueryable();
+
+            if (!string.IsNullOrEmpty(filter.FirstName))
+            {
+                students = students.Where(t => t.FirstName.Contains(filter.FirstName));
+            }
+
+            if (!string.IsNullOrEmpty(filter.LastName))
+            {
+                students = students.Where(t => t.LastName.Contains(filter.LastName));
+            }
+
+            if (!string.IsNullOrEmpty(filter.StudentId))
+            {
+                students = students.Where(t => t.StudentId.Contains(filter.StudentId));
+            }
+
+            var studentsList = await students.ToListAsync();
+
+            filter.Students = studentsList;
+
+            return View(filter);
         }
 
         // GET: Students/Details/5
@@ -82,8 +104,6 @@ namespace UniversityPortal.Controllers
         }
 
         // POST: Students/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(long id, [Bind("Id,StudentId,FirstName,LastName,EnrollmentDate,AcquiredCredits,CurrentSemester,EducationLevel")] Student student)

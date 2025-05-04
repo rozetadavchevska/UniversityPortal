@@ -17,6 +17,7 @@ namespace UniversityPortal.Models
         public int Semester { get; set; }
         [StringLength(100)]
         public string? Programme { get; set; }
+        [Display(Name = "Education Level")]
         [StringLength(25)]
         public string? EducationLevel { get; set; }
         public int? FirstTeacherId { get; set; }

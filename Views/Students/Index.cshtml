@@ -1,4 +1,5 @@
-﻿@model IEnumerable<UniversityPortal.Models.Student>
+﻿@using UniversityPortal.ViewModels
+@model StudentFilterViewModel
 
 @{
     ViewData["Title"] = "Students";
@@ -11,7 +12,7 @@
         color: #213555;
     }
 
-    h1 {
+    h2 {
         color: #213555;
         margin-bottom: 30px;
     }
@@ -28,79 +29,166 @@
             color: #F1F0E8;
         }
 
-    .table {
+    .student-card {
         background-color: #ffffff;
         border-radius: 10px;
-        overflow: hidden;
+        padding: 20px;
+        margin-bottom: 20px;
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
 
-        .table thead {
-            background-color: #213555;
-            color: #F1F0E8;
-        }
+    .student-details {
+        flex: 1;
+    }
 
-        .table tbody tr:hover {
-            background-color: #F1F0E8;
-        }
+    .student-name {
+        font-size: 1.25rem;
+        font-weight: 600;
+        margin-bottom: 5px;
+    }
 
-        .table td, .table th {
-            vertical-align: middle;
-        }
+    .student-meta {
+        font-size: 0.9rem;
+        color: #555;
+    }
 
     .action-links a {
-        margin-right: 10px;
+        margin-left: 15px;
         color: #213555;
         text-decoration: none;
-        transition: color 0.2s ease;
+        font-size: 0.9rem;
     }
 
         .action-links a:hover {
             color: #3E5879;
             text-decoration: underline;
         }
+
+    .badge {
+        font-size: 0.85rem;
+        padding: 0.5em 0.75em;
+        background-color: #F1F0E8;
+        color: #213555;
+        border-radius: 20px;
+        border: solid 1px #213555;
+    }
+
+        .badge:hover {
+            color: #213555;
+        }
+
+    #filtersPanel {
+        overflow: hidden;
+        max-height: 0;
+        padding: 0 1rem;
+        transition: max-height 0.4s ease, padding 0.4s ease;
+        background-color: #ffffff;
+        border-radius: 5px;
+    }
+
+        #filtersPanel.open {
+            max-height: 500px;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
 </style>
 
 <div class="container mt-4">
-    <div class="d-flex justify-content-between">
-        <h2 class="text-start">Students</h2>
-        <p>
-            <a asp-action="Create" class="btn btn-custom mb-3">➕ Add New Student</a>
-        </p>
+    <div class="d-flex justify-content-between align-items-center">
+        <h2>Students</h2>
+        <a asp-action="Create" class="btn btn-custom">➕ Add New Student</a>
     </div>
 
+    <form method="get" id="filterForm">
+        <div class="d-flex justify-content-start align-items-center mb-3">
+            <div>
+                <button type="button" class="btn d-flex align-items-center p-2 btn-custom" id="toggleFilters">
+                    <span class="material-symbols-outlined">tune</span>
+                    Filters
+                </button>
+            </div>
 
-    <table class="table table-hover">
-        <thead>
-            <tr>
-                <th>@Html.DisplayNameFor(model => model.StudentId)</th>
-                <th>@Html.DisplayNameFor(model => model.FirstName)</th>
-                <th>@Html.DisplayNameFor(model => model.LastName)</th>
-                <th>@Html.DisplayNameFor(model => model.EnrollmentDate)</th>
-                <th>@Html.DisplayNameFor(model => model.AcquiredCredits)</th>
-                <th>@Html.DisplayNameFor(model => model.CurrentSemester)</th>
-                <th>@Html.DisplayNameFor(model => model.EducationLevel)</th>
-                <th class="text-center">Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in Model)
-            {
-                <tr>
-                    <td>@Html.DisplayFor(modelItem => item.StudentId)</td>
-                    <td>@Html.DisplayFor(modelItem => item.FirstName)</td>
-                    <td>@Html.DisplayFor(modelItem => item.LastName)</td>
-                    <td>@Html.DisplayFor(modelItem => item.EnrollmentDate)</td>
-                    <td>@Html.DisplayFor(modelItem => item.AcquiredCredits)</td>
-                    <td>@Html.DisplayFor(modelItem => item.CurrentSemester)</td>
-                    <td>@Html.DisplayFor(modelItem => item.EducationLevel)</td>
-                    <td class="action-links text-center">
-                        <a asp-action="Edit" asp-route-id="@item.Id"><i class="fas fa-edit"></i> Edit</a>
-                        <a asp-action="Details" asp-route-id="@item.Id"><i class="fas fa-info-circle"></i> Details</a>
-                        <a asp-action="Delete" asp-route-id="@item.Id"><i class="fas fa-trash"></i> Delete</a>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
+            <div class="d-flex align-items-center">
+                @if (!string.IsNullOrEmpty(Model.StudentId) || !string.IsNullOrEmpty(Model.FirstName) || !string.IsNullOrEmpty(Model.LastName))
+                {
+                    <div class="d-inline-flex flex-wrap align-items-center gap-2 ms-2">
+                        @if (!string.IsNullOrEmpty(Model.StudentId))
+                        {
+                            <a class="badge text-decoration-none" href="@Url.Action("Index", new { firstName = Model.FirstName, lastName = Model.LastName })">
+                                ID: @Model.StudentId <span class="ms-1">×</span>
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.FirstName))
+                        {
+                            <a class="badge text-decoration-none" href="@Url.Action("Index", new { studentId = Model.StudentId, lastName = Model.LastName })">
+                                First Name: @Model.FirstName <span class="ms-1">×</span>
+                            </a>
+                        }
+                        @if (!string.IsNullOrEmpty(Model.LastName))
+                        {
+                            <a class="badge text-decoration-none" href="@Url.Action("Index", new { studentId = Model.StudentId, firstName = Model.FirstName })">
+                                Last Name: @Model.LastName <span class="ms-1">×</span>
+                            </a>
+                        }
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div id="filtersPanel" class="border mb-3">
+            <div class="row">
+                <div class="col-md-4 mb-2">
+                    <label for="studentId" class="form-label">Student ID</label>
+                    <input type="text" name="StudentId" id="studentId" class="form-control form-control-sm"
+                           value="@Model.StudentId" placeholder="e.g. 12345" />
+                </div>
+                <div class="col-md-4 mb-2">
+                    <label for="firstName" class="form-label">First Name</label>
+                    <input type="text" name="FirstName" id="firstName" class="form-control form-control-sm"
+                           value="@Model.FirstName" placeholder="e.g. John" />
+                </div>
+                <div class="col-md-4 mb-2">
+                    <label for="lastName" class="form-label">Last Name</label>
+                    <input type="text" name="LastName" id="lastName" class="form-control form-control-sm"
+                           value="@Model.LastName" placeholder="e.g. Smith" />
+                </div>
+            </div>
+            <div class="text-end">
+                <button type="submit" class="btn btn-sm btn-custom mt-2">Apply Filters</button>
+            </div>
+        </div>
+    </form>
+
+    <div class="row">
+        @foreach (var student in Model.Students)
+        {
+            <div class="col-md-4">
+                <div class="student-card">
+                    <div class="student-details">
+                        <div class="student-name">@student.FirstName @student.LastName</div>
+                        <div class="student-meta">
+                            Student ID: @student.StudentId<br />
+                        </div>
+                    </div>
+                    <div class="action-links">
+                        <a asp-action="Edit" asp-route-id="@student.Id"><i class="fas fa-edit"></i></a>
+                        <a asp-action="Details" asp-route-id="@student.Id"><i class="fas fa-info-circle"></i></a>
+                        <a asp-action="Delete" asp-route-id="@student.Id"><i class="fas fa-trash"></i></a>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.getElementById('toggleFilters').addEventListener('click', function () {
+            const panel = document.getElementById('filtersPanel');
+            panel.classList.toggle('open');
+        });
+    </script>
+}

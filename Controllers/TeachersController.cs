@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using UniversityPortal.Areas.Identity.Data;
 using UniversityPortal.Models;
+using UniversityPortal.ViewModels;
 
 namespace UniversityPortal.Controllers
 {
@@ -20,9 +21,35 @@ namespace UniversityPortal.Controllers
         }
 
         // GET: Teachers
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(TeacherFilterViewModel filter)
         {
-            return View(await _context.Teachers.ToListAsync());
+            var teachers = _context.Teachers.AsQueryable();
+
+            if (!string.IsNullOrEmpty(filter.FirstName))
+            {
+                teachers = teachers.Where(t => t.FirstName.Contains(filter.FirstName));
+            }
+
+            if (!string.IsNullOrEmpty(filter.LastName))
+            {
+                teachers = teachers.Where(t => t.LastName.Contains(filter.LastName));
+            }
+
+            if (!string.IsNullOrEmpty(filter.Degree))
+            {
+                teachers = teachers.Where(t => t.Degree.Contains(filter.Degree));
+            }
+
+            if (!string.IsNullOrEmpty(filter.AcademicRank))
+            {
+                teachers = teachers.Where(t => t.AcademicRank.Contains(filter.AcademicRank));
+            }
+
+            var teachersList = await teachers.ToListAsync();
+
+            filter.Teachers = teachersList;
+
+            return View(filter);
         }
 
         // GET: Teachers/Details/5
@@ -34,6 +61,8 @@ namespace UniversityPortal.Controllers
             }
 
             var teacher = await _context.Teachers
+                .Include(t => t.FirstTeacherCourses)
+                .Include(t => t.SecondTeacherCourses)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (teacher == null)
             {
@@ -50,8 +79,6 @@ namespace UniversityPortal.Controllers
         }
 
         // POST: Teachers/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Degree,AcademicRank,OfficeNumber,HireDate")] Teacher teacher)
@@ -82,8 +109,6 @@ namespace UniversityPortal.Controllers
         }
 
         // POST: Teachers/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Degree,AcademicRank,OfficeNumber,HireDate")] Teacher teacher)
