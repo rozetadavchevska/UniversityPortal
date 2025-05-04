@@ -35,7 +35,7 @@ namespace UniversityPortal.Controllers
                 courses = courses.Where(s => s.Semester == filter.Semester);
             }
 
-            if(!string.IsNullOrEmpty(filter.Programme))
+            if (!string.IsNullOrEmpty(filter.Programme))
             {
                 courses = courses.Where(c => c.Programme.Contains(filter.Programme));
             }
@@ -58,7 +58,10 @@ namespace UniversityPortal.Controllers
             var course = await _context.Courses
                 .Include(c => c.FirstTeacher)
                 .Include(c => c.SecondTeacher)
+                .Include(c => c.Enrollments)
+                    .ThenInclude(e => e.Student)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (course == null)
             {
                 return NotFound();
