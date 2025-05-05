@@ -11,6 +11,32 @@
         color: #213555;
     }
 
+    .profile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 30px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .profile-name {
+        flex: 1;
+        text-align: center;
+    }
+
+        .profile-name h1 {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 0;
+            color: #213555;
+        }
+
+    .left-action,
+    .right-action {
+        flex: 0 0 auto;
+    }
+
     h1, h4 {
         color: #213555;
         margin-bottom: 20px;
@@ -44,24 +70,58 @@
             background-color: #3E5879;
             color: #F1F0E8;
         }
+
+    .courses-section {
+        margin-top: 40px;
+    }
+
+    .course-item {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    }
+
+    .course-link {
+        text-decoration: none;
+        color: #213555;
+        font-weight: 500;
+    }
+
+        .course-link:hover {
+            text-decoration: underline;
+            color: #3E5879;
+        }
+
+    .badge-role {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+        border-radius: 50px;
+    }
 </style>
 
 <div class="container mt-4">
-    <h2>🎓 Student Details</h2>
-    <div class="d-flex justify-content-between mt-4">
-        <a asp-action="Index" class="btn btn-outline-secondary">← Back to List</a>
-        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom"><i class="fas fa-edit"></i> Edit</a>
+    <div class="profile-header">
+        <div class="left-action">
+            <a asp-action="Index" class="btn btn-outline-secondary">← Back</a>
+        </div>
+        <div class="profile-name">
+            <h1>@Model.FirstName @Model.LastName</h1>
+        </div>
+        <div class="right-action">
+            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom">Edit</a>
+        </div>
     </div>
+
     <div class="details-box mt-3">
         <dl class="row">
             <dt class="col-sm-3">@Html.DisplayNameFor(model => model.StudentId)</dt>
             <dd class="col-sm-9">@Html.DisplayFor(model => model.StudentId)</dd>
-
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.FirstName)</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.FirstName)</dd>
-
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.LastName)</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.LastName)</dd>
 
             <dt class="col-sm-3">@Html.DisplayNameFor(model => model.EnrollmentDate)</dt>
             <dd class="col-sm-9">@Html.DisplayFor(model => model.EnrollmentDate)</dd>
@@ -75,5 +135,32 @@
             <dt class="col-sm-3">@Html.DisplayNameFor(model => model.EducationLevel)</dt>
             <dd class="col-sm-9">@Html.DisplayFor(model => model.EducationLevel)</dd>
         </dl>
+    </div>
+
+    <div class="courses-section">
+        <h4>Enrolled Courses</h4>
+
+        @if (Model.Enrollments != null && Model.Enrollments.Any())
+        {
+            <div class="row">
+                @foreach (var enrollment in Model.Enrollments)
+                {
+                    <div class="col-md-6">
+                        <div class="course-item">
+                            <a asp-controller="Courses" asp-action="Details" asp-route-id="@enrollment.Course.Id" class="course-link">
+                                @enrollment.Course.Title
+                            </a>
+                            <span class="badge bg-secondary badge-role">
+                                Semester @enrollment.Course.Semester
+                            </span>
+                        </div>
+                    </div>
+                }
+            </div>
+        }
+        else
+        {
+            <p class="text-muted mt-3">This student is not enrolled in any courses yet.</p>
+        }
     </div>
 </div>

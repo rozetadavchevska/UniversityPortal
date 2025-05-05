@@ -58,7 +58,10 @@ namespace UniversityPortal.Controllers
             }
 
             var student = await _context.Students
+                .Include(s => s.Enrollments)
+                    .ThenInclude(e => e.Course)
                 .FirstOrDefaultAsync(m => m.Id == id);
+
             if (student == null)
             {
                 return NotFound();
