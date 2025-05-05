@@ -140,6 +140,7 @@
             <h1>@Model.Title</h1>
         </div>
         <div class="right-action">
+            <a asp-action="EnrollStudents" asp-route-id="@Model.Id" class="btn btn-custom">Enroll Students</a>
             <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom"><i class="fas fa-edit"></i> Edit</a>
         </div>
     </div>

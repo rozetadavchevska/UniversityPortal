@@ -1,0 +1,179 @@
+﻿@model UniversityPortal.ViewModels.CourseEnrollmentViewModel
+
+@{
+    ViewData["Title"] = "Manage Enrollments";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style>
+    body {
+        background-color: #F1F0E8;
+        color: #213555;
+    }
+
+    .profile-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 30px;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .profile-title {
+        flex: 1;
+        text-align: center;
+    }
+
+        .profile-title h1 {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 0;
+            color: #213555;
+        }
+
+    .left-action {
+        flex: 0 0 auto;
+    }
+
+    .student-card {
+        background-color: #fff;
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 20px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+    }
+
+    .student-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+    }
+
+    .details-section {
+        display: none;
+        margin-top: 15px;
+    }
+
+    .btn-custom {
+        background-color: #213555;
+        color: #F1F0E8;
+        border: none;
+        padding: 8px 18px;
+        transition: background-color 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+        .btn-custom:hover {
+            background-color: #3E5879;
+            color: #F1F0E8;
+        }
+
+    .submit-btn-container {
+        text-align: right;
+        margin-top: 30px;
+    }
+</style>
+
+<div class="container">
+    <div class="profile-header">
+        <div class="left-action">
+            <a asp-action="Details" asp-route-id="@Model.CourseId" class="btn btn-outline-secondary">← Back</a>
+        </div>
+        <div class="profile-title">
+            <h1>Enroll Students - @Model.CourseTitle</h1>
+        </div>
+    </div>
+
+
+    <form asp-action="EnrollStudents" method="post">
+        <input type="hidden" asp-for="CourseId" />
+
+        @for (int i = 0; i < Model.Students.Count; i++)
+        {
+            var studentId = $"student_{i}";
+            <div class="student-card">
+                <div class="student-header">
+                    <div><strong>@Model.Students[i].FullName</strong></div>
+                    <div>
+                        <label>
+                            <input type="checkbox"
+                                   asp-for="Students[@i].IsEnrolled"
+                                   data-toggle="details"
+                                   data-target="#details-@i" />
+                            Enroll
+                        </label>
+                        <input type="hidden" asp-for="Students[@i].StudentId" />
+                    </div>
+                </div>
+
+                <div class="details-section" id="details-@i">
+                    <div class="row g-3">
+                        <div class="col-md-2">
+                            <label>Grade</label>
+                            <input asp-for="Students[@i].Grade" class="form-control" />
+                        </div>
+                        <div class="col-md-2">
+                            <label>Semester</label>
+                            <input asp-for="Students[@i].Semester" class="form-control" />
+                        </div>
+                        <div class="col-md-2">
+                            <label>Year</label>
+                            <input asp-for="Students[@i].Year" class="form-control" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Project URL</label>
+                            <input asp-for="Students[@i].ProjectUrl" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Exam Points</label>
+                            <input asp-for="Students[@i].ExamPoints" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Seminar Points</label>
+                            <input asp-for="Students[@i].SeminarPoints" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Project Points</label>
+                            <input asp-for="Students[@i].ProjectPoints" class="form-control" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>Additional Points</label>
+                            <input asp-for="Students[@i].AdditionalPoints" class="form-control" />
+                        </div>
+                        <div class="col-md-4 mt-2">
+                            <label>Finish Date</label>
+                            <input asp-for="Students[@i].FinishDate" class="form-control" type="date" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+
+        <div class="submit-btn-container">
+            <button type="submit" class="btn btn-custom">Save Enrollments</button>
+        </div>
+    </form>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelectorAll('[data-toggle="details"]').forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const target = document.querySelector(this.dataset.target);
+                if (this.checked) {
+                    target.style.display = 'block';
+                } else {
+                    target.style.display = 'none';
+                }
+            });
+
+            if (checkbox.checked) {
+                const target = document.querySelector(checkbox.dataset.target);
+                if (target) target.style.display = 'block';
+            }
+        });
+    </script>
+}

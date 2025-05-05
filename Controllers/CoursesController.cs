@@ -73,14 +73,26 @@ namespace UniversityPortal.Controllers
         // GET: Courses/Create
         public IActionResult Create()
         {
-            ViewData["FirstTeacherId"] = new SelectList(_context.Teachers, "Id", "FirstName");
-            ViewData["SecondTeacherId"] = new SelectList(_context.Teachers, "Id", "FirstName");
+            ViewBag.FirstTeacherId = _context.Teachers
+               .Select(t => new SelectListItem
+               {
+                   Value = t.Id.ToString(),
+                   Text = t.FirstName + " " + t.LastName
+               })
+               .ToList();
+
+            ViewBag.SecondTeacherId = _context.Teachers
+                .Select(t => new SelectListItem
+                {
+                    Value = t.Id.ToString(),
+                    Text = t.FirstName + " " + t.LastName
+                })
+                .ToList();
+
             return View();
         }
 
         // POST: Courses/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Credits,Semester,Programme,EducationLevel,FirstTeacherId,SecondTeacherId")] Course course)
@@ -91,8 +103,23 @@ namespace UniversityPortal.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["FirstTeacherId"] = new SelectList(_context.Teachers, "Id", "FirstName", course.FirstTeacherId);
-            ViewData["SecondTeacherId"] = new SelectList(_context.Teachers, "Id", "FirstName", course.SecondTeacherId);
+
+            ViewBag.FirstTeacherId = _context.Teachers
+               .Select(t => new SelectListItem
+               {
+                   Value = t.Id.ToString(),
+                   Text = t.FirstName + " " + t.LastName
+               })
+               .ToList();
+
+            ViewBag.SecondTeacherId = _context.Teachers
+                .Select(t => new SelectListItem
+                {
+                    Value = t.Id.ToString(),
+                    Text = t.FirstName + " " + t.LastName
+                })
+                .ToList();
+
             return View(course);
         }
 
@@ -104,19 +131,37 @@ namespace UniversityPortal.Controllers
                 return NotFound();
             }
 
-            var course = await _context.Courses.FindAsync(id);
+            var course = await _context.Courses
+                .Include(c => c.FirstTeacher)
+                .Include(c => c.SecondTeacher)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+
             if (course == null)
             {
                 return NotFound();
             }
-            ViewData["FirstTeacherId"] = new SelectList(_context.Teachers, "Id", "FirstName", course.FirstTeacherId);
-            ViewData["SecondTeacherId"] = new SelectList(_context.Teachers, "Id", "FirstName", course.SecondTeacherId);
+
+            ViewBag.FirstTeacherId = _context.Teachers
+                .Select(t => new SelectListItem
+                {
+                    Value = t.Id.ToString(),
+                    Text = t.FirstName + " " + t.LastName
+                })
+                .ToList();
+
+            ViewBag.SecondTeacherId = _context.Teachers
+                .Select(t => new SelectListItem
+                {
+                    Value = t.Id.ToString(),
+                    Text = t.FirstName + " " + t.LastName
+                })
+                .ToList();
+
             return View(course);
         }
 
         // POST: Courses/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Credits,Semester,Programme,EducationLevel,FirstTeacherId,SecondTeacherId")] Course course)
@@ -190,5 +235,84 @@ namespace UniversityPortal.Controllers
         {
             return _context.Courses.Any(e => e.Id == id);
         }
+
+        public async Task<IActionResult> EnrollStudents(int id)
+        {
+            var course = await _context.Courses
+                .Include(c => c.Enrollments)
+                    .ThenInclude(e => e.Student)
+                .FirstOrDefaultAsync(c => c.Id == id);
+
+            if (course == null) return NotFound();
+
+            var allStudents = await _context.Students.ToListAsync();
+
+            var model = new CourseEnrollmentViewModel
+            {
+                CourseId = course.Id,
+                CourseTitle = course.Title,
+                Students = allStudents.Select(student =>
+                {
+                    var enrollment = course.Enrollments.FirstOrDefault(e => e.StudentId == student.Id);
+                    return new StudentEnrollmentViewModel
+                    {
+                        StudentId = student.Id,
+                        FullName = student.FirstName + " " + student.LastName,
+                        IsEnrolled = enrollment != null,
+                        Grade = enrollment?.Grade,
+                        Semester = enrollment?.Semester,
+                        Year = enrollment?.Year,
+                        ProjectUrl = enrollment?.ProjectUrl,
+                        ExamPoints = enrollment?.ExamPoints,
+                        SeminarPoints = enrollment?.SeminarPoints,
+                        ProjectPoints = enrollment?.ProjectPoints,
+                        AdditionalPoints = enrollment?.AdditionalPoints,
+                        FinishDate = enrollment?.FinishDate
+                    };
+                }).ToList()
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EnrollStudents(CourseEnrollmentViewModel model)
+        {
+            var course = await _context.Courses
+                .Include(c => c.Enrollments)
+                .FirstOrDefaultAsync(c => c.Id == model.CourseId);
+
+            if (course == null) return NotFound();
+
+            _context.Enrollments.RemoveRange(course.Enrollments);
+
+            foreach (var student in model.Students)
+            {
+                if (student.IsEnrolled)
+                {
+                    var enrollment = new Enrollment
+                    {
+                        CourseId = model.CourseId,
+                        StudentId = student.StudentId,
+                        Grade = student.Grade,
+                        Semester = student.Semester,
+                        Year = student.Year,
+                        ProjectUrl = student.ProjectUrl,
+                        ExamPoints = student.ExamPoints,
+                        SeminarPoints = student.SeminarPoints,
+                        ProjectPoints = student.ProjectPoints,
+                        AdditionalPoints = student.AdditionalPoints,
+                        FinishDate = student.FinishDate
+                    };
+
+                    _context.Enrollments.Add(enrollment);
+                }
+            }
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id = model.CourseId });
+        }
+
     }
 }

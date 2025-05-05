@@ -29,6 +29,12 @@
             color: #F1F0E8;
         }
 
+    .add-button {
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+    }
+
     .student-card {
         background-color: #ffffff;
         border-radius: 10px;
@@ -46,9 +52,16 @@
 
     .student-name {
         font-size: 1.25rem;
-        font-weight: 600;
+        font-weight: 700;
         margin-bottom: 5px;
+        color: #213555;
+        text-decoration: none;
     }
+
+        .student-name:hover {
+            color: #3E5879;
+            text-decoration: underline;
+        }
 
     .student-meta {
         font-size: 0.9rem;
@@ -99,7 +112,11 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center">
         <h2>Students</h2>
-        <a asp-action="Create" class="btn btn-custom">➕ Add New Student</a>
+        <a asp-action="Create" class="btn btn-custom add-button">
+            <span class="material-symbols-outlined">
+                add
+            </span>  Add New Student
+        </a>
     </div>
 
     <form method="get" id="filterForm">
@@ -168,7 +185,7 @@
             <div class="col-md-4">
                 <div class="student-card">
                     <div class="student-details">
-                        <div class="student-name">@student.FirstName @student.LastName</div>
+                        <a asp-action="Details" asp-route-id="@student.Id" class="student-name">@student.FirstName @student.LastName</a>
                         <div class="student-meta">
                             Student ID: @student.StudentId<br />
                         </div>

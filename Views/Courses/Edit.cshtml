@@ -11,88 +11,109 @@
         color: #213555;
     }
 
-    h2, h4 {
-        color: #213555;
-        margin-bottom: 20px;
+    .profile-title {
+        text-align: center;
+        margin-top: 30px;
     }
 
-    .form-container {
+        .profile-title h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #213555;
+        }
+
+    .info-card {
         background-color: #ffffff;
-        border-radius: 10px;
+        border-radius: 12px;
         padding: 30px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-top: 30px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
     }
 
     .form-group label {
         font-weight: 600;
+        color: #3E5879;
+    }
+
+    .form-group input,
+    .form-group select {
+        border-radius: 6px;
     }
 
     .btn-custom {
         background-color: #213555;
         color: #F1F0E8;
         border: none;
+        padding: 8px 18px;
         transition: background-color 0.3s ease;
-        margin-right: 10px;
+        font-size: 0.95rem;
     }
 
         .btn-custom:hover {
             background-color: #3E5879;
             color: #F1F0E8;
         }
+
+    .btn-cancel {
+        margin-left: 10px;
+    }
 </style>
 
-<div class="container mt-4">
-    <h2>📚 Edit Course</h2>
-    <div class="form-container mt-3">
+<div class="container">
+    <div class="profile-title">
+        <h2>Edit Course</h2>
+    </div>
+
+    <div class="info-card">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="Id" />
 
             <div class="form-group mb-3">
-                <label asp-for="Title" class="control-label"></label>
+                <label asp-for="Title"></label>
                 <input asp-for="Title" class="form-control" />
                 <span asp-validation-for="Title" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="Credits" class="control-label"></label>
+                <label asp-for="Credits"></label>
                 <input asp-for="Credits" class="form-control" />
                 <span asp-validation-for="Credits" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="Semester" class="control-label"></label>
+                <label asp-for="Semester"></label>
                 <input asp-for="Semester" class="form-control" />
                 <span asp-validation-for="Semester" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="Programme" class="control-label"></label>
+                <label asp-for="Programme"></label>
                 <input asp-for="Programme" class="form-control" />
                 <span asp-validation-for="Programme" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="EducationLevel" class="control-label"></label>
+                <label asp-for="EducationLevel"></label>
                 <input asp-for="EducationLevel" class="form-control" />
                 <span asp-validation-for="EducationLevel" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="FirstTeacherId" class="control-label"></label>
+                <label asp-for="FirstTeacherId">First Teacher</label>
                 <select asp-for="FirstTeacherId" class="form-control" asp-items="ViewBag.FirstTeacherId"></select>
                 <span asp-validation-for="FirstTeacherId" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-4">
-                <label asp-for="SecondTeacherId" class="control-label"></label>
+                <label asp-for="SecondTeacherId">Second Teacher</label>
                 <select asp-for="SecondTeacherId" class="form-control" asp-items="ViewBag.SecondTeacherId"></select>
                 <span asp-validation-for="SecondTeacherId" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
+            <div class="form-group d-flex">
                 <input type="submit" value="Save Changes" class="btn btn-custom" />
-                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-cancel">Cancel</a>
             </div>
         </form>
     </div>

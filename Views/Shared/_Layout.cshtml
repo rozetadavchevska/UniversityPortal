@@ -43,6 +43,10 @@
                     background-color: #3E5879;
                 }
 
+        .dashboard-icon{
+            width: 20px;
+        }
+
         .content {
             margin-left: 200px;
             padding: 20px;
@@ -90,11 +94,11 @@
     @if (User.Identity.IsAuthenticated)
     {
         <div class="sidebar position-fixed">
-            <a asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home me-2"></i>Dashboard</a>
-            <a asp-area="" asp-controller="Students" asp-action="Index"><i class="fas fa-user-graduate me-2"></i>Students</a>
-            <a asp-area="" asp-controller="Teachers" asp-action="Index"><i class="fas fa-chalkboard-teacher me-2"></i>Teachers</a>
-            <a asp-area="" asp-controller="Courses" asp-action="Index"><i class="fas fa-book me-2"></i>Courses</a>
-            <a asp-area="" asp-controller="Enrollments" asp-action="Index"><i class="fas fa-file-alt me-2"></i>Enrollments</a>
+            <a asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home me-2 dashboard-icon"></i>Dashboard</a>
+            <a asp-area="" asp-controller="Students" asp-action="Index"><i class="fas fa-user-graduate me-2 dashboard-icon"></i>Students</a>
+            <a asp-area="" asp-controller="Teachers" asp-action="Index"><i class="fas fa-chalkboard-teacher me-2 dashboard-icon"></i>Teachers</a>
+            <a asp-area="" asp-controller="Courses" asp-action="Index"><i class="fas fa-book me-2 dashboard-icon"></i>Courses</a>
+            @* <a asp-area="" asp-controller="Enrollments" asp-action="Index"><i class="fas fa-file-alt me-2 dashboard-icon"></i>Enrollments</a> *@
         </div>
     }
 
