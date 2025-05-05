@@ -11,88 +11,108 @@
         color: #213555;
     }
 
-    h1, h4 {
-        color: #213555;
-        margin-bottom: 20px;
+    .profile-title {
+        text-align: center;
+        margin-top: 30px;
     }
 
-    .form-container {
+        .profile-title h2 {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #213555;
+        }
+
+    .info-card {
         background-color: #ffffff;
-        border-radius: 10px;
+        border-radius: 12px;
         padding: 30px;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+        margin-top: 30px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
     }
 
     .form-group label {
         font-weight: 600;
+        color: #3E5879;
+    }
+
+    .form-group input {
+        border-radius: 6px;
     }
 
     .btn-custom {
         background-color: #213555;
         color: #F1F0E8;
         border: none;
+        padding: 8px 18px;
         transition: background-color 0.3s ease;
-        margin-right: 10px;
+        font-size: 0.95rem;
     }
 
         .btn-custom:hover {
             background-color: #3E5879;
             color: #F1F0E8;
         }
+
+    .btn-cancel {
+        margin-left: 10px;
+    }
 </style>
 
-<div class="container mt-4">
-    <h2>✏️ Edit Student</h2>
-    <div class="form-container mt-3">
+<div class="container">
+    <div class="profile-title">
+        <h2>Edit Student</h2>
+    </div>
+
+    <div class="info-card">
         <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
             <input type="hidden" asp-for="Id" />
 
             <div class="form-group mb-3">
-                <label asp-for="StudentId" class="control-label"></label>
+                <label asp-for="StudentId">Student ID</label>
                 <input asp-for="StudentId" class="form-control" />
                 <span asp-validation-for="StudentId" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="FirstName" class="control-label"></label>
+                <label asp-for="FirstName">First Name</label>
                 <input asp-for="FirstName" class="form-control" />
                 <span asp-validation-for="FirstName" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="LastName" class="control-label"></label>
+                <label asp-for="LastName">Last Name</label>
                 <input asp-for="LastName" class="form-control" />
                 <span asp-validation-for="LastName" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="EnrollmentDate" class="control-label"></label>
-                <input asp-for="EnrollmentDate" class="form-control" />
+                <label asp-for="EnrollmentDate">Enrollment Date</label>
+                <input asp-for="EnrollmentDate" class="form-control" type="date" />
                 <span asp-validation-for="EnrollmentDate" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="AcquiredCredits" class="control-label"></label>
+                <label asp-for="AcquiredCredits">Acquired Credits</label>
                 <input asp-for="AcquiredCredits" class="form-control" />
                 <span asp-validation-for="AcquiredCredits" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-3">
-                <label asp-for="CurrentSemester" class="control-label"></label>
+                <label asp-for="CurrentSemester">Current Semester</label>
                 <input asp-for="CurrentSemester" class="form-control" />
                 <span asp-validation-for="CurrentSemester" class="text-danger"></span>
             </div>
 
             <div class="form-group mb-4">
-                <label asp-for="EducationLevel" class="control-label"></label>
+                <label asp-for="EducationLevel">Education Level</label>
                 <input asp-for="EducationLevel" class="form-control" />
                 <span asp-validation-for="EducationLevel" class="text-danger"></span>
             </div>
 
-            <div class="form-group">
+            <div class="form-group d-flex">
                 <input type="submit" value="Save Changes" class="btn btn-custom" />
-                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <a asp-action="Index" class="btn btn-outline-secondary btn-cancel">Cancel</a>
             </div>
         </form>
     </div>
