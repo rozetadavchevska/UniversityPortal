@@ -298,6 +298,7 @@ namespace UniversityPortal.Controllers
                         Grade = student.Grade,
                         Semester = student.Semester,
                         Year = student.Year,
+                        SeminarUrl = student.SeminarUrl,
                         ProjectUrl = student.ProjectUrl,
                         ExamPoints = student.ExamPoints,
                         SeminarPoints = student.SeminarPoints,

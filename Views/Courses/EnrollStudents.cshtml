@@ -124,8 +124,13 @@
                             <input asp-for="Students[@i].Year" class="form-control" />
                         </div>
                         <div class="col-md-6">
+                            <label>Seminar URL</label>
+                            <input asp-for="Students[@i].SeminarUrl" class="form-control" type="file" id="SeminarWorkFile" name="SeminarWorkFile" />
+                        </div>
+
+                        <div class="col-md-6">
                             <label>Project URL</label>
-                            <input asp-for="Students[@i].ProjectUrl" class="form-control" />
+                            <input asp-for="Students[@i].ProjectUrl" class="form-control" type="file" id="ProjectFile" name="ProjectFile" />
                         </div>
                         <div class="col-md-3">
                             <label>Exam Points</label>

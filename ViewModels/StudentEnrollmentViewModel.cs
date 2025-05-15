@@ -10,6 +10,7 @@
         public int? Grade { get; set; }
         public string? Semester { get; set; }
         public int? Year { get; set; }
+        public string? SeminarUrl { get; set; }
         public string? ProjectUrl { get; set; }
         public int? ExamPoints { get; set; }
         public int? SeminarPoints { get; set; }
