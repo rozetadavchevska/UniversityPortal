@@ -93,13 +93,31 @@
     <!-- Sidebar -->
     @if (User.Identity.IsAuthenticated)
     {
-        <div class="sidebar position-fixed">
-            <a asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home me-2 dashboard-icon"></i>Dashboard</a>
-            <a asp-area="" asp-controller="Students" asp-action="Index"><i class="fas fa-user-graduate me-2 dashboard-icon"></i>Students</a>
-            <a asp-area="" asp-controller="Teachers" asp-action="Index"><i class="fas fa-chalkboard-teacher me-2 dashboard-icon"></i>Teachers</a>
-            <a asp-area="" asp-controller="Courses" asp-action="Index"><i class="fas fa-book me-2 dashboard-icon"></i>Courses</a>
-            @* <a asp-area="" asp-controller="Enrollments" asp-action="Index"><i class="fas fa-file-alt me-2 dashboard-icon"></i>Enrollments</a> *@
-        </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="sidebar position-fixed">
+                <a asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home me-2 dashboard-icon"></i>Dashboard</a>
+                <a asp-area="" asp-controller="Students" asp-action="Index"><i class="fas fa-user-graduate me-2 dashboard-icon"></i>Students</a>
+                <a asp-area="" asp-controller="Teachers" asp-action="Index"><i class="fas fa-chalkboard-teacher me-2 dashboard-icon"></i>Teachers</a>
+                <a asp-area="" asp-controller="Courses" asp-action="Index"><i class="fas fa-book me-2 dashboard-icon"></i>Courses</a>
+                @* <a asp-area="" asp-controller="Enrollments" asp-action="Index"><i class="fas fa-file-alt me-2 dashboard-icon"></i>Enrollments</a> *@
+            </div>
+        }
+        else if (User.IsInRole("Student"))
+        {
+            <div class="sidebar position-fixed">
+                <a asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home me-2 dashboard-icon"></i>Dashboard</a>
+                <a asp-area="" asp-controller="Courses" asp-action="Index"><i class="fas fa-book me-2 dashboard-icon"></i>Courses</a>
+            </div>
+        }
+        else if (User.IsInRole("Teacher"))
+        {
+            <div class="sidebar position-fixed">
+                <a asp-area="" asp-controller="Home" asp-action="Index"><i class="fas fa-home me-2 dashboard-icon"></i>Dashboard</a>
+                <a asp-area="" asp-controller="Courses" asp-action="Index"><i class="fas fa-book me-2 dashboard-icon"></i>Courses</a>
+            </div>
+        }
+        
     }
 
     <!-- Main Content -->
@@ -110,7 +128,7 @@
     </div>
 
     <footer class="text-center p-3 mt-5">
-        &copy; 2025 - UniversityPortal - <a class="text-decoration-none text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        &copy; 2025 - University Portal - <a class="text-decoration-none text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </footer>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>

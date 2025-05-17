@@ -1,47 +1,131 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity
+@{
     ViewData["Title"] = "Dashboard";
 }
 
-<div class="container-fluid">
-    <div class="row mb-4">
-        <div class="col">
-            <h1 class="fw-bold">Welcome to the University Portal</h1>
-            <p class="text-muted">Manage everything from one place: Students, Teachers, Courses, and Enrollments.</p>
+<div class="container-fluid" style="height: 100%;">
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <div class="d-flex justify-content-center align-items-center" style="height: 60vh">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="card shadow-lg border-0 p-4 text-center">
+                    <div class="mb-3">
+                        <i class="fas fa-university fa-4x" style="color: #213555"></i>
+                    </div>
+                    <h2 class="mb-3 fw-bold" style="color: #213555;">Welcome to the University Portal</h2>
+                    <p class="mb-4 text-muted">Please log in to access your dashboard and manage your university activities.</p>
+                    <a href="/Identity/Account/Login" class="btn btn-lg btn-custom px-5" style="background-color: #213555; color: #F1F0E8;">
+                        <i class="fas fa-sign-in-alt me-2"></i>Login
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
+    }
 
-    <div class="row g-4">
-        <div class="col-md-3">
-            <div class="card text-center p-3">
-                <i class="fas fa-user-graduate fa-2x text-primary mb-2"></i>
-                <h5>Students</h5>
-                <p>Manage student records</p>
-                <a href="/Students" class="btn btn-outline-primary btn-sm">Go</a>
+    else if (User.IsInRole("Admin"))
+    {
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="fw-bold">Admin Dashboard</h1>
+                <p class="text-muted">Manage everything from one place: Students, Teachers, Courses, and Enrollments.</p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-center p-3">
-                <i class="fas fa-chalkboard-teacher fa-2x text-success mb-2"></i>
-                <h5>Teachers</h5>
-                <p>Manage teaching staff</p>
-                <a href="/Teachers" class="btn btn-outline-success btn-sm">Go</a>
+        <div class="row g-4">
+            <div class="col-md-3">
+                <div class="card text-center p-3">
+                    <i class="fas fa-user-graduate fa-2x text-primary mb-2"></i>
+                    <h5>Students</h5>
+                    <p>Manage student records</p>
+                    <a href="/Students" class="btn btn-outline-primary btn-sm">Go</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-3">
+                    <i class="fas fa-chalkboard-teacher fa-2x text-success mb-2"></i>
+                    <h5>Teachers</h5>
+                    <p>Manage teaching staff</p>
+                    <a href="/Teachers" class="btn btn-outline-success btn-sm">Go</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-3">
+                    <i class="fas fa-book fa-2x text-warning mb-2"></i>
+                    <h5>Courses</h5>
+                    <p>Manage course offerings</p>
+                    <a href="/Courses" class="btn btn-outline-warning btn-sm">Go</a>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card text-center p-3">
+                    <i class="fas fa-file-alt fa-2x text-danger mb-2"></i>
+                    <h5>Enrollments</h5>
+                    <p>Track student enrollments</p>
+                    <a href="/Enrollments" class="btn btn-outline-danger btn-sm">Go</a>
+                </div>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-center p-3">
-                <i class="fas fa-book fa-2x text-warning mb-2"></i>
-                <h5>Courses</h5>
-                <p>Manage course offerings</p>
-                <a href="/Courses" class="btn btn-outline-warning btn-sm">Go</a>
+    }
+    else if (User.IsInRole("Teacher"))
+    {
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="fw-bold">Teacher Dashboard</h1>
+                <p class="text-muted">View and manage your courses and enrolled students.</p>
             </div>
         </div>
-        <div class="col-md-3">
-            <div class="card text-center p-3">
-                <i class="fas fa-file-alt fa-2x text-danger mb-2"></i>
-                <h5>Enrollments</h5>
-                <p>Track student enrollments</p>
-                <a href="/Enrollments" class="btn btn-outline-danger btn-sm">Go</a>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card text-center p-3">
+                    <i class="fas fa-book fa-2x text-warning mb-2"></i>
+                    <h5>My Courses</h5>
+                    <p>View and manage your courses</p>
+                    <a href="/Courses/MyCourses" class="btn btn-outline-warning btn-sm">Go</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center p-3">
+                    <i class="fas fa-user-graduate fa-2x text-primary mb-2"></i>
+                    <h5>Enrolled Students</h5>
+                    <p>View students enrolled in your courses</p>
+                    <a href="/Enrollments/MyEnrollments" class="btn btn-outline-primary btn-sm">Go</a>
+                </div>
             </div>
         </div>
-    </div>
+    }
+    else if (User.IsInRole("Student"))
+    {
+        <div class="row mb-4">
+            <div class="col">
+                <h1 class="fw-bold">Student Dashboard</h1>
+                <p class="text-muted">View your courses, grades, and progress.</p>
+            </div>
+        </div>
+        <div class="row g-4">
+            <div class="col-md-4">
+                <div class="card text-center p-3">
+                    <i class="fas fa-book fa-2x text-warning mb-2"></i>
+                    <h5>My Courses</h5>
+                    <p>View your enrolled courses</p>
+                    <a href="/Courses/MyCourses" class="btn btn-outline-warning btn-sm">Go</a>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card text-center p-3">
+                    <i class="fas fa-file-alt fa-2x text-danger mb-2"></i>
+                    <h5>My Enrollments</h5>
+                    <p>Track your enrollment status</p>
+                    <a href="/Enrollments/MyEnrollments" class="btn btn-outline-danger btn-sm">Go</a>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="row justify-content-center align-items-center" style="height: 60vh;">
+            <div class="col-md-6 text-center">
+                <h2>Welcome to the University Portal</h2>
+                <p>Your account does not have a specific dashboard.</p>
+            </div>
+        </div>
+    }
 </div>
