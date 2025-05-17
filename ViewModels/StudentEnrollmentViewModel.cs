@@ -2,7 +2,7 @@
 {
     public class StudentEnrollmentViewModel
     {
-        public long StudentId { get; set; }
+        public string StudentId { get; set; }
         public string FullName { get; set; }
 
         public bool IsEnrolled { get; set; }

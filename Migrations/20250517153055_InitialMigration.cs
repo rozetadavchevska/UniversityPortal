@@ -54,8 +54,7 @@ namespace UniversityPortal.Migrations
                 name: "Students",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     StudentId = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
@@ -73,8 +72,7 @@ namespace UniversityPortal.Migrations
                 name: "Teachers",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     FirstName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     LastName = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     Degree = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: true),
@@ -204,8 +202,8 @@ namespace UniversityPortal.Migrations
                     Semester = table.Column<int>(type: "int", nullable: false),
                     Programme = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: true),
                     EducationLevel = table.Column<string>(type: "nvarchar(25)", maxLength: 25, nullable: true),
-                    FirstTeacherId = table.Column<int>(type: "int", nullable: true),
-                    SecondTeacherId = table.Column<int>(type: "int", nullable: true)
+                    FirstTeacherId = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    SecondTeacherId = table.Column<string>(type: "nvarchar(450)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -231,7 +229,7 @@ namespace UniversityPortal.Migrations
                     Id = table.Column<long>(type: "bigint", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     CourseId = table.Column<int>(type: "int", nullable: false),
-                    StudentId = table.Column<long>(type: "bigint", nullable: false),
+                    StudentId = table.Column<string>(type: "nvarchar(450)", nullable: false),
                     Semester = table.Column<string>(type: "nvarchar(10)", maxLength: 10, nullable: true),
                     Year = table.Column<int>(type: "int", nullable: true),
                     Grade = table.Column<int>(type: "int", nullable: true),

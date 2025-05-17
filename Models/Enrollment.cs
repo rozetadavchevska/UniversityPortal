@@ -5,14 +5,13 @@ namespace UniversityPortal.Models
 {
     public class Enrollment
     {
-        [Key]
         public long Id { get; set; }
         [Required]
         public int CourseId { get; set; }
         [ForeignKey("CourseId")]
         public Course? Course { get; set; }
         [Required]
-        public long StudentId { get; set; }
+        public string StudentId { get; set; }
         [ForeignKey("StudentId")]
         public Student? Student { get; set; }
         [StringLength(10)]

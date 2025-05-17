@@ -239,15 +239,15 @@ namespace UniversityPortal.Migrations
                         .HasMaxLength(25)
                         .HasColumnType("nvarchar(25)");
 
-                    b.Property<int?>("FirstTeacherId")
-                        .HasColumnType("int");
+                    b.Property<string>("FirstTeacherId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Programme")
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<int?>("SecondTeacherId")
-                        .HasColumnType("int");
+                    b.Property<string>("SecondTeacherId")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int>("Semester")
                         .HasColumnType("int");
@@ -307,8 +307,9 @@ namespace UniversityPortal.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<long>("StudentId")
-                        .HasColumnType("bigint");
+                    b.Property<string>("StudentId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("Year")
                         .HasColumnType("int");
@@ -324,11 +325,8 @@ namespace UniversityPortal.Migrations
 
             modelBuilder.Entity("UniversityPortal.Models.Student", b =>
                 {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<int?>("AcquiredCredits")
                         .HasColumnType("int");
@@ -365,11 +363,8 @@ namespace UniversityPortal.Migrations
 
             modelBuilder.Entity("UniversityPortal.Models.Teacher", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    b.Property<string>("Id")
+                        .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("AcademicRank")
                         .HasMaxLength(25)

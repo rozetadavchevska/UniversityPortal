@@ -1,18 +1,50 @@
 ﻿@using Microsoft.AspNetCore.Identity
-
+@using UniversityPortal.Models
+@using UniversityPortal.Areas.Identity.Data
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
+@inject ApplicationDbContext DbContext
 
+@{
+    var userId = UserManager.GetUserId(User);
+    var student = DbContext.Students.FirstOrDefault(s => s.Id == userId);
+    var teacher = DbContext.Teachers.FirstOrDefault(t => t.Id == userId);
+    var displayName = student != null
+        ? $"{student.FirstName} {student.LastName}"
+        : teacher != null
+            ? $"{teacher.FirstName} {teacher.LastName}"
+            : UserManager.GetUserName(User);
+}
 <ul class="navbar-nav">
     @if (SignInManager.IsSignedIn(User))
     {
-        <li class="nav-item">
-            <a id="manage" class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Manage/Index" title="Manage">Hello @UserManager.GetUserName(User)!</a>
-        </li>
-        <li class="nav-item">
-            <form id="logoutForm" class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                <button id="logout" type="submit" class="nav-link btn btn-link text-dark border-0">Logout</button>
-            </form>
+        <li class="nav-item dropdown">
+            <a class="nav-link dropdown-toggle text-dark d-flex align-items-center pe-3" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                <span>@displayName</span>
+            </a>
+            <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="userDropdown" style="min-width: 240px; border-radius: 12px;">
+                <li>
+                    <div class="px-4 py-3 text-center" style="border-radius: 12px 12px 0 0;">
+                        <i class="fas fa-user-circle fa-2x mb-2" style="color: #213555;"></i>
+                        <div class="fw-semibold" style="font-size: 1.08rem;">@UserManager.GetUserName(User)</div>
+                    </div>
+                </li>
+                <li><hr class="dropdown-divider my-1"></li>
+                <li>
+                    <a class="dropdown-item py-2 d-flex align-items-center justify-content-center" asp-area="Identity" asp-page="/Account/Manage/Index">
+                        <i class="fas fa-user-cog me-2"></i>
+                        <span>Manage Profile</span>
+                    </a>
+                </li>
+                <li>
+                    <form id="logoutForm" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })" method="post" class="d-flex align-items-center justify-content-center m-0">
+                        <button type="submit" class="dropdown-item text-danger py-2 d-flex align-items-center justify-content-center" style="font-weight: 500;">
+                            <i class="fas fa-sign-out-alt me-2"></i>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
         </li>
     }
 </ul>

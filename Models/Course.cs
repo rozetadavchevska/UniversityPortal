@@ -6,7 +6,6 @@ namespace UniversityPortal.Models
 {
     public class Course
     {
-        [Key]
         public int Id { get; set; }
         [Required]
         [StringLength(100)]
@@ -20,10 +19,10 @@ namespace UniversityPortal.Models
         [Display(Name = "Education Level")]
         [StringLength(25)]
         public string? EducationLevel { get; set; }
-        public int? FirstTeacherId { get; set; }
+        public string? FirstTeacherId { get; set; }
         [ForeignKey("FirstTeacherId")]
         public Teacher? FirstTeacher { get; set; }
-        public int? SecondTeacherId { get; set; }
+        public string? SecondTeacherId { get; set; }
         [ForeignKey("SecondTeacherId")]
         public Teacher? SecondTeacher { get; set; }
 

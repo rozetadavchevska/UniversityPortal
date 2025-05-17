@@ -53,7 +53,7 @@ namespace UniversityPortal.Controllers
         }
 
         // GET: Students/Details/5
-        public async Task<IActionResult> Details(long? id)
+        public async Task<IActionResult> Details(string? id)
         {
             if (id == null)
             {
@@ -86,32 +86,30 @@ namespace UniversityPortal.Controllers
         [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Create(Student student, string email, string password)
         {
-            if (ModelState.IsValid)
+            var user = new IdentityUser
             {
-                var user = new IdentityUser 
-                {
-                    UserName = email,
-                    Email = email,
-                    EmailConfirmed = true
-                };
+                UserName = email,
+                Email = email,
+                EmailConfirmed = true
+            };
 
-                var result = await _userManager.CreateAsync(user, password);
-                if (!result.Succeeded)
+            var result = await _userManager.CreateAsync(user, password);
+            if (!result.Succeeded)
+            {
+                foreach (var error in result.Errors)
                 {
-                    foreach (var error in result.Errors)
-                    {
-                        ModelState.AddModelError(string.Empty, error.Description);
-                    }
-                    return View(student);
+                    ModelState.AddModelError(string.Empty, error.Description);
                 }
-
-                await _userManager.AddToRoleAsync(user, "Student");
-
-                _context.Add(student);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                return View(student);
             }
-            return View(student);
+
+            await _userManager.AddToRoleAsync(user, "Student");
+
+            student.Id = user.Id;
+
+            _context.Add(student);
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: Students/Edit/5
@@ -133,7 +131,7 @@ namespace UniversityPortal.Controllers
         // POST: Students/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(long id, [Bind("Id,StudentId,FirstName,LastName,EnrollmentDate,AcquiredCredits,CurrentSemester,EducationLevel")] Student student)
+        public async Task<IActionResult> Edit(string id, Student student)
         {
             if (id != student.Id)
             {
@@ -165,7 +163,7 @@ namespace UniversityPortal.Controllers
 
         // GET: Students/Delete/5
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Delete(long? id)
+        public async Task<IActionResult> Delete(string? id)
         {
             if (id == null)
             {
@@ -198,7 +196,7 @@ namespace UniversityPortal.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StudentExists(long id)
+        private bool StudentExists(string id)
         {
             return _context.Students.Any(e => e.Id == id);
         }

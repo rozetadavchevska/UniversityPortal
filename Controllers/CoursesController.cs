@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AspNetCoreGeneratedDocument;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -15,16 +17,39 @@ namespace UniversityPortal.Controllers
     public class CoursesController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<IdentityUser> _userManager;
 
-        public CoursesController(ApplicationDbContext context)
+        public CoursesController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
         // GET: Courses
         public async Task<IActionResult> Index(CourseFilterViewModel filter)
         {
             var courses = _context.Courses.AsQueryable();
+
+            var user = await _userManager.GetUserAsync(User);
+
+            if (User.IsInRole("Student"))
+            {
+                var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == user.Id);
+                if (student != null)
+                {
+                    var enrolledCourses = _context.Enrollments.Where(e => e.StudentId == student.Id)
+                        .Select(e => e.CourseId);
+                    courses = courses.Where(c => enrolledCourses.Contains(c.Id));
+                }
+            }
+            else if (User.IsInRole("Teacher"))
+            {
+                var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.Id == user.Id);
+                if(teacher != null)
+                {
+                    courses = courses.Where(c => c.FirstTeacherId == teacher.Id || c.SecondTeacherId == teacher.Id);
+                }
+            }
 
             if (!string.IsNullOrEmpty(filter.Title))
             {

@@ -4,8 +4,7 @@ namespace UniversityPortal.Models
 {
     public class Teacher
     {
-        [Key]
-        public int Id { get; set; }
+        public string Id { get; set; }
         [Display(Name = "First Name")]
         [Required]
         [StringLength(50)]
