@@ -93,6 +93,14 @@ namespace UniversityPortal.Controllers
                 return NotFound();
             }
 
+            if (User.IsInRole("Student"))
+            {
+                var user = await _userManager.GetUserAsync(User);
+                var student = await _context.Students.FirstOrDefaultAsync(s => s.Id == user.Id);
+                var enrollment = course.Enrollments.FirstOrDefault(e => e.StudentId == student.Id);
+                ViewData["StudentEnrollment"] = enrollment;
+            }
+
             return View(course);
         }
 

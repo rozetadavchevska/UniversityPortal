@@ -1,8 +1,15 @@
 ﻿@model UniversityPortal.Models.Course
+@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Authorization
+@using UniversityPortal.ViewModels
+@inject SignInManager<IdentityUser> SignInManager
+@inject UserManager<IdentityUser> UserManager
 
 @{
     ViewData["Title"] = Model.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var studentEnrollment = ViewData["StudentEnrollment"] as Enrollment;
+    var enrollments = ViewData["Enrollments"];
 }
 
 <style>
@@ -69,7 +76,7 @@
         margin-bottom: 15px;
     }
 
-    .teachers-section {
+    .teachers-section, .student-enrollment-section {
         margin-top: 40px;
     }
 
@@ -139,10 +146,13 @@
         <div class="profile-title">
             <h1>@Model.Title</h1>
         </div>
-        <div class="right-action">
-            <a asp-action="EnrollStudents" asp-route-id="@Model.Id" class="btn btn-custom">Enroll Students</a>
-            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom"><i class="fas fa-edit"></i> Edit</a>
-        </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="right-action">
+                <a asp-action="EnrollStudents" asp-route-id="@Model.Id" class="btn btn-custom">Enroll Students</a>
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom"><i class="fas fa-edit"></i> Edit</a>
+            </div>
+        }
     </div>
 
     <div class="info-card">
@@ -162,7 +172,7 @@
     </div>
 
     <div class="teachers-section">
-        <h4 >Assigned Teachers</h4>
+        <h4>Assigned Teachers</h4>
 
         @if (Model.FirstTeacher != null)
         {
@@ -188,31 +198,90 @@
         }
     </div>
 
-    <div class="students-section">
-        <h4>Enrolled Students</h4>
-
-        @if (Model.Enrollments != null && Model.Enrollments.Any())
-        {
-            <div class="row">
-                @foreach (var enrollment in Model.Enrollments)
+    @if (User.IsInRole("Student"))
+    {
+        <div class="student-enrollment-section">
+            <h4>Your Enrollment Details</h4>
+            <div class="info-card" style="margin-top: 0;">
+                @if (studentEnrollment != null)
                 {
-                    <div class="col-md-6">
-                        <div class="student-item">
-                            <a asp-controller="Students" asp-action="Details" asp-route-id="@enrollment.Student.Id" class="student-link">
-                                @enrollment.Student.FirstName @enrollment.Student.LastName
-                            </a>
-                            <span class="badge bg-secondary badge-role">@enrollment.Semester, @enrollment.Year</span>
-                        </div>
-                    </div>
+                    <dl class="row info-list">
+                        <dt class="col-sm-3">Grade</dt>
+                        <dd class="col-sm-9">@studentEnrollment.Grade</dd>
+
+                        <dt class="col-sm-3">Semester</dt>
+                        <dd class="col-sm-9">@studentEnrollment.Semester</dd>
+
+                        <dt class="col-sm-3">Year</dt>
+                        <dd class="col-sm-9">@studentEnrollment.Year</dd>
+
+                        <dt class="col-sm-3">Exam Points</dt>
+                        <dd class="col-sm-9">@studentEnrollment.ExamPoints</dd>
+
+                        <dt class="col-sm-3">Seminar Points</dt>
+                        <dd class="col-sm-9">@studentEnrollment.SeminarPoints</dd>
+
+                        <dt class="col-sm-3">Project Points</dt>
+                        <dd class="col-sm-9">@studentEnrollment.ProjectPoints</dd>
+
+                        <dt class="col-sm-3">Additional Points</dt>
+                        <dd class="col-sm-9">@studentEnrollment.AdditionalPoints</dd>
+
+                        @if (!string.IsNullOrEmpty(studentEnrollment.SeminarUrl))
+                        {
+                            <dt class="col-sm-3">Seminar URL</dt>
+                            <dd class="col-sm-9">
+                                <a href="@studentEnrollment.SeminarUrl" target="_blank">@studentEnrollment.SeminarUrl</a>
+                            </dd>
+                        }
+
+                        @if (!string.IsNullOrEmpty(studentEnrollment.ProjectUrl))
+                        {
+                            <dt class="col-sm-3">Project URL</dt>
+                            <dd class="col-sm-9">
+                                <a href="@studentEnrollment.ProjectUrl" target="_blank">@studentEnrollment.ProjectUrl</a>
+                            </dd>
+                        }
+
+                        <dt class="col-sm-3">Finish Date</dt>
+                        <dd class="col-sm-9">@studentEnrollment.FinishDate?.ToString("yyyy-MM-dd")</dd>
+                    </dl>
+                }
+                else
+                {
+                    <p class="text-muted">You are not enrolled in this course.</p>
                 }
             </div>
-
-        }
-        else
-        {
-            <p class="text-muted mt-3">No students enrolled in this course yet.</p>
-        }
-    </div>
+        </div>
+    }
 
 
+    @if (User.IsInRole("Admin") || User.IsInRole("Teacher"))
+    {
+        <div class="students-section">
+            <h4>Enrolled Students</h4>
+
+            @if (Model.Enrollments != null && Model.Enrollments.Any())
+            {
+                <div class="row">
+                    @foreach (var enrollment in Model.Enrollments)
+                    {
+                        <div class="col-md-6">
+                            <div class="student-item">
+                                <a asp-controller="Students" asp-action="Details" asp-route-id="@enrollment.Student.Id" class="student-link">
+                                    @enrollment.Student.FirstName @enrollment.Student.LastName
+                                </a>
+                                <span class="badge bg-secondary badge-role">@enrollment.Semester, @enrollment.Year</span>
+                            </div>
+                        </div>
+                    }
+                </div>
+
+            }
+            else
+            {
+                <p class="text-muted mt-3">No students enrolled in this course yet.</p>
+            }
+        </div>
+    }
 </div>

@@ -3,6 +3,7 @@
     public class StudentEnrollmentViewModel
     {
         public string StudentId { get; set; }
+        public int CourseId { get; set; }
         public string FullName { get; set; }
 
         public bool IsEnrolled { get; set; }
