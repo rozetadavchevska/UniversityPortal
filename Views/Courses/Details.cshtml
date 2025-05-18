@@ -153,6 +153,20 @@
             background-color: #3E5879;
             color: #F1F0E8;
         }
+
+    .btn-custom-toggle{
+        background-color: #F1F0E8;
+        color: #213555;
+        border: solid 1px #213555;
+        padding: 8px 18px;
+        transition: background-color 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+    .btn-custom-toggle:hover {
+        background-color: #3E5879;
+        color: #F1F0E8;
+    }
 </style>
 
 <div class="container">
@@ -248,13 +262,15 @@
                         <dd class="col-sm-9">
                             @if (!string.IsNullOrEmpty(studentEnrollment?.SeminarUrl))
                             {
+                                <a href="@studentEnrollment.SeminarUrl" target="_blank">@fileName</a>
+                                <button type="button" class="btn btn-sm btn-custom-toggle ms-2" onclick="toggleSeminarForm()">Update</button>
 
-                                <a href="@studentEnrollment.SeminarUrl" target="_blank">
-                                    
-
-                                    @fileName
-                                </a>
-
+                                <form asp-controller="Enrollments" asp-action="AttachSeminarFile" method="post" enctype="multipart/form-data" id="seminarForm" class="align-items-center gap-2 mt-2" style="display:none;">
+                                    <input type="hidden" name="studentFullName" value="@($"{studentEnrollment.Student.FirstName} {studentEnrollment.Student.LastName}")" />
+                                    <input type="hidden" name="enrollmentId" value="@studentEnrollment.Id" />
+                                    <input type="file" name="file" class="form-control w-50" accept=".doc,.docx,.pdf" />
+                                    <button type="submit" class="btn btn-custom-toggle">Update File</button>
+                                </form>
                             }
                             else
                             {
@@ -264,8 +280,6 @@
                                     <input type="file" name="file" class="form-control w-50" accept=".doc,.docx,.pdf" />
                                     <button type="submit" class="btn btn-custom">Upload</button>
                                 </form>
-
-
                             }
                         </dd>
 
@@ -274,6 +288,13 @@
                             @if (!string.IsNullOrEmpty(studentEnrollment?.ProjectUrl))
                             {
                                 <a href="@studentEnrollment.ProjectUrl" target="_blank">@studentEnrollment.ProjectUrl</a>
+                                <button type="button" class="btn btn-sm btn-custom-toggle ms-2" onclick="toggleProjectForm()">Update</button>
+
+                                <form asp-controller="Enrollments" asp-action="AttachProjectUrl" method="post" id="projectForm" class="align-items-center gap-2 mt-2" style="display:none;">
+                                    <input type="hidden" name="enrollmentId" value="@studentEnrollment.Id" />
+                                    <input type="url" name="projectUrl" class="form-control w-50" placeholder="Enter new project URL" required />
+                                    <button type="submit" class="btn btn-custom">Update URL</button>
+                                </form>
                             }
                             else
                             {
@@ -328,3 +349,16 @@
         </div>
     }
 </div>
+
+
+<script>
+    function toggleSeminarForm() {
+        var form = document.getElementById("seminarForm");
+        form.style.display = form.style.display === "none" ? "flex" : "none";
+    }
+
+    function toggleProjectForm() {
+        var form = document.getElementById("projectForm");
+        form.style.display = form.style.display === "none" ? "flex" : "none";
+    }
+</script>
