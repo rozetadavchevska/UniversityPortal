@@ -1,7 +1,9 @@
-﻿@model UniversityPortal.Models.Course
+﻿@using System.IO
 @using Microsoft.AspNetCore.Identity
 @using Microsoft.AspNetCore.Authorization
 @using UniversityPortal.ViewModels
+
+@model UniversityPortal.Models.Course
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
@@ -9,7 +11,12 @@
     ViewData["Title"] = Model.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
     var studentEnrollment = ViewData["StudentEnrollment"] as Enrollment;
-    var enrollments = ViewData["Enrollments"];
+
+    string fileName = null;
+    if (!string.IsNullOrEmpty(studentEnrollment?.SeminarUrl))
+    {
+        fileName = System.IO.Path.GetFileName(studentEnrollment.SeminarUrl);
+    }
 }
 
 <style>
@@ -72,9 +79,6 @@
         width: 180px;
     }
 
-    .info-list dd {
-        margin-bottom: 15px;
-    }
 
     .teachers-section, .student-enrollment-section {
         margin-top: 40px;
@@ -136,6 +140,19 @@
             color: #3E5879;
         }
 
+    .btn-custom {
+        background-color: #213555;
+        color: #F1F0E8;
+        border: none;
+        padding: 8px 18px;
+        transition: background-color 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+        .btn-custom:hover {
+            background-color: #3E5879;
+            color: #F1F0E8;
+        }
 </style>
 
 <div class="container">
@@ -156,7 +173,7 @@
     </div>
 
     <div class="info-card">
-        <dl class="row info-list">
+        <dl class="row info-list mb-0">
             <dt class="col-sm-3">@Html.DisplayNameFor(model => model.Credits)</dt>
             <dd class="col-sm-9">@Html.DisplayFor(model => model.Credits)</dd>
 
@@ -205,10 +222,7 @@
             <div class="info-card" style="margin-top: 0;">
                 @if (studentEnrollment != null)
                 {
-                    <dl class="row info-list">
-                        <dt class="col-sm-3">Grade</dt>
-                        <dd class="col-sm-9">@studentEnrollment.Grade</dd>
-
+                    <dl class="row info-list mb-0">
                         <dt class="col-sm-3">Semester</dt>
                         <dd class="col-sm-9">@studentEnrollment.Semester</dd>
 
@@ -227,21 +241,50 @@
                         <dt class="col-sm-3">Additional Points</dt>
                         <dd class="col-sm-9">@studentEnrollment.AdditionalPoints</dd>
 
-                        @if (!string.IsNullOrEmpty(studentEnrollment.SeminarUrl))
-                        {
-                            <dt class="col-sm-3">Seminar URL</dt>
-                            <dd class="col-sm-9">
-                                <a href="@studentEnrollment.SeminarUrl" target="_blank">@studentEnrollment.SeminarUrl</a>
-                            </dd>
-                        }
+                        <dt class="col-sm-3">Grade</dt>
+                        <dd class="col-sm-9">@studentEnrollment.Grade</dd>
 
-                        @if (!string.IsNullOrEmpty(studentEnrollment.ProjectUrl))
-                        {
-                            <dt class="col-sm-3">Project URL</dt>
-                            <dd class="col-sm-9">
+                        <dt class="col-sm-3">Seminar URL</dt>
+                        <dd class="col-sm-9">
+                            @if (!string.IsNullOrEmpty(studentEnrollment?.SeminarUrl))
+                            {
+
+                                <a href="@studentEnrollment.SeminarUrl" target="_blank">
+                                    
+
+                                    @fileName
+                                </a>
+
+                            }
+                            else
+                            {
+                                <form asp-controller="Enrollments" asp-action="AttachSeminarFile" method="post" enctype="multipart/form-data" class="d-flex align-items-center gap-2">
+                                    <input type="hidden" name="studentFullName" value="@($"{studentEnrollment.Student.FirstName} {studentEnrollment.Student.LastName}")" />
+                                    <input type="hidden" name="enrollmentId" value="@studentEnrollment.Id" />
+                                    <input type="file" name="file" class="form-control w-50" accept=".doc,.docx,.pdf" />
+                                    <button type="submit" class="btn btn-custom">Upload</button>
+                                </form>
+
+
+                            }
+                        </dd>
+
+                        <dt class="col-sm-3">Project URL</dt>
+                        <dd class="col-sm-9">
+                            @if (!string.IsNullOrEmpty(studentEnrollment?.ProjectUrl))
+                            {
                                 <a href="@studentEnrollment.ProjectUrl" target="_blank">@studentEnrollment.ProjectUrl</a>
-                            </dd>
-                        }
+                            }
+                            else
+                            {
+                                <form asp-controller="Enrollments" asp-action="AttachProjectUrl" method="post" class="d-flex align-items-center gap-2">
+                                    <input type="hidden" name="enrollmentId" value="@studentEnrollment.Id" />
+                                    <input type="url" name="projectUrl" class="form-control d-inline w-50" required />
+                                    <button type="submit" class="btn btn-custom">Submit</button>
+                                </form>
+                            }
+                        </dd>
+
 
                         <dt class="col-sm-3">Finish Date</dt>
                         <dd class="col-sm-9">@studentEnrollment.FinishDate?.ToString("yyyy-MM-dd")</dd>

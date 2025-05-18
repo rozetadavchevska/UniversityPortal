@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -13,10 +15,12 @@ namespace UniversityPortal.Controllers
     public class EnrollmentsController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public EnrollmentsController(ApplicationDbContext context)
+        public EnrollmentsController(ApplicationDbContext context, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Enrollments
@@ -56,7 +60,7 @@ namespace UniversityPortal.Controllers
 
             return View();
         }
-            
+
         // POST: Enrollments/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -168,6 +172,60 @@ namespace UniversityPortal.Controllers
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> AttachSeminarFile(IFormFile file, string studentFullName, long enrollmentId)
+        {
+            if (file == null || file.Length == 0)
+                return BadRequest("No file uploaded.");
+
+            var uploadPath = Path.Combine(_webHostEnvironment.WebRootPath, "seminar-files", studentFullName);
+
+            if (!Directory.Exists(uploadPath))
+                Directory.CreateDirectory(uploadPath);
+
+            var fileName = $"{enrollmentId}_{Path.GetFileName(file.FileName)}";
+            var filePath = Path.Combine(uploadPath, fileName);
+
+            using (var stream = new FileStream(filePath, FileMode.Create))
+            {
+                await file.CopyToAsync(stream);
+            }
+
+            var fileUrl = $"/seminar-files/{studentFullName}/{fileName}";
+
+            var enrollment = await _context.Enrollments.FindAsync(enrollmentId);
+            if (enrollment == null)
+                return NotFound();
+
+            enrollment.SeminarUrl = fileUrl;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", "Courses", new { id = enrollment.CourseId });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Student")]
+        public async Task<IActionResult> AttachProjectUrl(string projectUrl, long enrollmentId)
+        {
+            var enrollment = await _context.Enrollments.FindAsync(enrollmentId);
+            if (enrollment == null)
+                return NotFound();
+
+            if (string.IsNullOrWhiteSpace(projectUrl) || !Uri.IsWellFormedUriString(projectUrl, UriKind.Absolute))
+            {
+                ModelState.AddModelError("projectUrl", "Invalid URL.");
+                return RedirectToAction("Details", "Courses", new { id = enrollment.CourseId });
+            }
+
+            enrollment.ProjectUrl = projectUrl;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction("Details", "Courses", new { id = enrollment.CourseId });
         }
 
         private bool EnrollmentExists(long id)
