@@ -45,7 +45,7 @@ namespace UniversityPortal.Controllers
             else if (User.IsInRole("Teacher"))
             {
                 var teacher = await _context.Teachers.FirstOrDefaultAsync(t => t.Id == user.Id);
-                if(teacher != null)
+                if (teacher != null)
                 {
                     courses = courses.Where(c => c.FirstTeacherId == teacher.Id || c.SecondTeacherId == teacher.Id);
                 }
@@ -74,7 +74,7 @@ namespace UniversityPortal.Controllers
         }
 
         // GET: Courses/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, int? year)
         {
             if (id == null)
             {
@@ -93,6 +93,15 @@ namespace UniversityPortal.Controllers
                 return NotFound();
             }
 
+            var years = course.Enrollments
+                .Where(e => e.Year.HasValue)
+                .Select(e => e.Year.Value)
+                .Distinct()
+                .OrderByDescending(y => y)
+                .ToList();
+
+            int selectedYear = year ?? DateTime.Now.Year;
+
             if (User.IsInRole("Student"))
             {
                 var user = await _userManager.GetUserAsync(User);
@@ -100,6 +109,15 @@ namespace UniversityPortal.Controllers
                 var enrollment = course.Enrollments.FirstOrDefault(e => e.StudentId == student.Id);
                 ViewData["StudentEnrollment"] = enrollment;
             }
+            else if (User.IsInRole("Teacher"))
+            {
+                course.Enrollments = course.Enrollments
+                    .Where(e => e.Year == selectedYear && e.FinishDate == null)
+                    .ToList();
+            }
+
+            ViewData["AvailableYears"] = years;
+            ViewData["SelectedYear"] = selectedYear;
 
             return View(course);
         }

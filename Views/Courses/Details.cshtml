@@ -11,6 +11,8 @@
     ViewData["Title"] = Model.Title;
     Layout = "~/Views/Shared/_Layout.cshtml";
     var studentEnrollment = ViewData["StudentEnrollment"] as Enrollment;
+    var availableYears = ViewData["AvailableYears"] as List<int>;
+    var selectedYear = (int)ViewData["SelectedYear"];
 
     string fileName = null;
     if (!string.IsNullOrEmpty(studentEnrollment?.SeminarUrl))
@@ -21,152 +23,152 @@
 
 <style>
     body {
-    background-color: #F1F0E8;
-    color: #213555;
+        background-color: #F1F0E8;
+        color: #213555;
     }
 
     .profile-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 30px;
-    flex-wrap: wrap;
-    gap: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 30px;
+        flex-wrap: wrap;
+        gap: 10px;
     }
 
     .profile-title {
-    flex: 1;
-    text-align: center;
+        flex: 1;
+        text-align: center;
     }
 
-    .profile-title h1 {
-    font-size: 2.2rem;
-    font-weight: bold;
-    margin: 0;
-    color: #213555;
-    }
+        .profile-title h1 {
+            font-size: 2.2rem;
+            font-weight: bold;
+            margin: 0;
+            color: #213555;
+        }
 
     .left-action,
     .right-action {
-    flex: 0 0 auto;
+        flex: 0 0 auto;
     }
 
     .btn-custom {
-    background-color: #213555;
-    color: #F1F0E8;
-    border: none;
-    padding: 8px 18px;
-    transition: background-color 0.3s ease;
-    font-size: 0.95rem;
+        background-color: #213555;
+        color: #F1F0E8;
+        border: none;
+        padding: 8px 18px;
+        transition: background-color 0.3s ease;
+        font-size: 0.95rem;
     }
 
-    .btn-custom:hover {
-    background-color: #3E5879;
-    color: #F1F0E8;
-    }
+        .btn-custom:hover {
+            background-color: #3E5879;
+            color: #F1F0E8;
+        }
 
     .info-card {
-    background-color: #ffffff;
-    border-radius: 12px;
-    padding: 30px;
-    margin-top: 30px;
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+        background-color: #ffffff;
+        border-radius: 12px;
+        padding: 30px;
+        margin-top: 30px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
     }
 
     .info-list dt {
-    font-weight: 600;
-    color: #3E5879;
-    width: 180px;
+        font-weight: 600;
+        color: #3E5879;
+        width: 180px;
     }
 
 
     .teachers-section, .student-enrollment-section {
-    margin-top: 40px;
+        margin-top: 40px;
     }
 
     .teacher-item {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 12px 20px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.03);
     }
 
     .teacher-link {
-    text-decoration: none;
-    color: #213555;
-    font-weight: 500;
+        text-decoration: none;
+        color: #213555;
+        font-weight: 500;
     }
 
-    .teacher-link:hover {
-    text-decoration: underline;
-    color: #3E5879;
-    }
+        .teacher-link:hover {
+            text-decoration: underline;
+            color: #3E5879;
+        }
 
     .badge-role {
-    font-size: 0.8rem;
-    padding: 6px 12px;
-    border-radius: 50px;
+        font-size: 0.8rem;
+        padding: 6px 12px;
+        border-radius: 50px;
     }
 
     .students-section {
-    margin-top: 40px;
+        margin-top: 40px;
     }
 
     .student-item {
-    background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 10px;
-    padding: 12px 20px;
-    margin-bottom: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 12px 20px;
+        margin-bottom: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
     }
 
     .student-link {
-    text-decoration: none;
-    color: #213555;
-    font-weight: 500;
+        text-decoration: none;
+        color: #213555;
+        font-weight: 500;
     }
 
-    .student-link:hover {
-    text-decoration: underline;
-    color: #3E5879;
-    }
+        .student-link:hover {
+            text-decoration: underline;
+            color: #3E5879;
+        }
 
     .btn-custom {
-    background-color: #213555;
-    color: #F1F0E8;
-    border: none;
-    padding: 8px 18px;
-    transition: background-color 0.3s ease;
-    font-size: 0.95rem;
+        background-color: #213555;
+        color: #F1F0E8;
+        border: none;
+        padding: 8px 18px;
+        transition: background-color 0.3s ease;
+        font-size: 0.95rem;
     }
 
-    .btn-custom:hover {
-    background-color: #3E5879;
-    color: #F1F0E8;
+        .btn-custom:hover {
+            background-color: #3E5879;
+            color: #F1F0E8;
+        }
+
+    .btn-custom-toggle {
+        background-color: #F1F0E8;
+        color: #213555;
+        border: solid 1px #213555;
+        padding: 8px 18px;
+        transition: background-color 0.3s ease;
+        font-size: 0.95rem;
     }
 
-    .btn-custom-toggle{
-    background-color: #F1F0E8;
-    color: #213555;
-    border: solid 1px #213555;
-    padding: 8px 18px;
-    transition: background-color 0.3s ease;
-    font-size: 0.95rem;
-    }
-
-    .btn-custom-toggle:hover {
-    background-color: #3E5879;
-    color: #F1F0E8;
-    }
+        .btn-custom-toggle:hover {
+            background-color: #3E5879;
+            color: #F1F0E8;
+        }
 </style>
 
 <div class="container">
@@ -327,6 +329,23 @@
 
             @if (Model.Enrollments != null && Model.Enrollments.Any())
             {
+                @if (User.IsInRole("Teacher"))
+                {
+                    <div class="mb-3">
+                        <form method="get" asp-action="Details" asp-route-id="@Model.Id" class="d-inline">
+                            <label for="yearSelect" class="form-label me-2">Show students for year:</label>
+                            <select id="yearSelect" name="year" class="form-select d-inline w-auto" onchange="this.form.submit()">
+                                @foreach (var y in availableYears)
+                                {
+                                    <option value="@y" selected="@(y == (int)selectedYear ? "selected" : null)">@y</option>
+                                }
+                            </select>
+                            <input type="hidden" name="id" value="@Model.Id" />
+                        </form>
+                    </div>
+
+                }
+
                 <div class="row">
                     @foreach (var enrollment in Model.Enrollments)
                     {
@@ -343,7 +362,6 @@
                         </div>
                     }
                 </div>
-
             }
             else
             {
@@ -351,17 +369,19 @@
             }
         </div>
     }
+
 </div>
 
+@section Scripts {
+    <script>
+        function toggleSeminarForm() {
+            var form = document.getElementById("seminarForm");
+            form.style.display = form.style.display === "none" ? "flex" : "none";
+        }
 
-<script>
-    function toggleSeminarForm() {
-        var form = document.getElementById("seminarForm");
-        form.style.display = form.style.display === "none" ? "flex" : "none";
-    }
-
-    function toggleProjectForm() {
-        var form = document.getElementById("projectForm");
-        form.style.display = form.style.display === "none" ? "flex" : "none";
-    }
-</script>
+        function toggleProjectForm() {
+            var form = document.getElementById("projectForm");
+            form.style.display = form.style.display === "none" ? "flex" : "none";
+        }
+    </script>
+}
