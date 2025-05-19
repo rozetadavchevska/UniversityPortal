@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Student Details";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var courseEnrollment = ViewData["CourseEnrollment"] as Enrollment;
 }
 
 <style>
@@ -49,14 +50,26 @@
         box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
     }
 
-    dt {
-        font-weight: 600;
-        color: #3E5879;
+
+    .info-card {
+        background-color: #ffffff;
+        border-radius: 12px;
+        padding: 30px;
+        margin-top: 30px;
+        box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
     }
 
-    dd {
-        margin-bottom: 15px;
+    .info-list dt {
+        font-weight: 600;
+        color: #3E5879;
+        width: 180px;
     }
+
+
+    .student-enrollment-section {
+        margin-top: 40px;
+    }
+
 
     .btn-custom {
         background-color: #213555;
@@ -103,6 +116,21 @@
         padding: 6px 12px;
         border-radius: 50px;
     }
+
+
+    .btn-custom-toggle {
+        background-color: #F1F0E8;
+        color: #213555;
+        border: solid 1px #213555;
+        padding: 8px 18px;
+        transition: background-color 0.3s ease;
+        font-size: 0.95rem;
+    }
+
+        .btn-custom-toggle:hover {
+            background-color: #3E5879;
+            color: #F1F0E8;
+        }
 </style>
 
 <div class="container mt-4">
@@ -113,9 +141,12 @@
         <div class="profile-name">
             <h1>@Model.FirstName @Model.LastName</h1>
         </div>
-        <div class="right-action">
-            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom">Edit</a>
-        </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="right-action">
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom">Edit</a>
+            </div>
+        }
     </div>
 
     <div class="details-box mt-3">
@@ -123,11 +154,14 @@
             <dt class="col-sm-3">@Html.DisplayNameFor(model => model.StudentId)</dt>
             <dd class="col-sm-9">@Html.DisplayFor(model => model.StudentId)</dd>
 
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.EnrollmentDate)</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.EnrollmentDate)</dd>
+            @if (User.IsInRole("Student"))
+            {
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.EnrollmentDate)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.EnrollmentDate)</dd>
 
-            <dt class="col-sm-3">@Html.DisplayNameFor(model => model.AcquiredCredits)</dt>
-            <dd class="col-sm-9">@Html.DisplayFor(model => model.AcquiredCredits)</dd>
+                <dt class="col-sm-3">@Html.DisplayNameFor(model => model.AcquiredCredits)</dt>
+                <dd class="col-sm-9">@Html.DisplayFor(model => model.AcquiredCredits)</dd>
+            }
 
             <dt class="col-sm-3">@Html.DisplayNameFor(model => model.CurrentSemester)</dt>
             <dd class="col-sm-9">@Html.DisplayFor(model => model.CurrentSemester)</dd>
@@ -137,30 +171,154 @@
         </dl>
     </div>
 
-    <div class="courses-section">
-        <h4>Enrolled Courses</h4>
+    @if (User.IsInRole("Student"))
+    {
+        <div class="courses-section">
+            <h4>Enrolled Courses</h4>
 
-        @if (Model.Enrollments != null && Model.Enrollments.Any())
-        {
-            <div class="row">
-                @foreach (var enrollment in Model.Enrollments)
-                {
-                    <div class="col-md-6">
-                        <div class="course-item">
-                            <a asp-controller="Courses" asp-action="Details" asp-route-id="@enrollment.Course.Id" class="course-link">
-                                @enrollment.Course.Title
-                            </a>
-                            <span class="badge bg-secondary badge-role">
-                                Semester @enrollment.Course.Semester
-                            </span>
+            @if (Model.Enrollments != null && Model.Enrollments.Any())
+            {
+                <div class="row">
+                    @foreach (var enrollment in Model.Enrollments)
+                    {
+                        <div class="col-md-6">
+                            <div class="course-item">
+                                <a asp-controller="Courses" asp-action="Details" asp-route-id="@enrollment.Course.Id" class="course-link">
+                                    @enrollment.Course.Title
+                                </a>
+                                <span class="badge bg-secondary badge-role">
+                                    Semester @enrollment.Course.Semester
+                                </span>
+                            </div>
                         </div>
-                    </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <p class="text-muted mt-3">This student is not enrolled in any courses yet.</p>
+            }
+        </div>
+    }
+
+
+    @if (User.IsInRole("Teacher") && courseEnrollment != null)
+    {
+        <div class="student-enrollment-section">
+            <h4>Enrollment Details for "@courseEnrollment.Course.Title"</h4>
+            <div class="info-card" style="margin-top: 0;">
+                @if (courseEnrollment.FinishDate == null)
+                {
+                    <button type="button" class="btn btn-sm btn-custom-toggle mb-3" onclick="toggleTeacherEditForm()">Update Points/Grade</button>
+                    <dl class="row info-list mb-0">
+                        <dt class="col-sm-3">Semester</dt>
+                        <dd class="col-sm-9">@courseEnrollment.Semester</dd>
+                        <dt class="col-sm-3">Year</dt>
+                        <dd class="col-sm-9">@courseEnrollment.Year</dd>
+                        <dt class="col-sm-3">Exam Points</dt>
+                        <dd class="col-sm-9">@courseEnrollment.ExamPoints</dd>
+                        <dt class="col-sm-3">Seminar Points</dt>
+                        <dd class="col-sm-9">@courseEnrollment.SeminarPoints</dd>
+                        <dt class="col-sm-3">Project Points</dt>
+                        <dd class="col-sm-9">@courseEnrollment.ProjectPoints</dd>
+                        <dt class="col-sm-3">Additional Points</dt>
+                        <dd class="col-sm-9">@courseEnrollment.AdditionalPoints</dd>
+                        <dt class="col-sm-3">Grade</dt>
+                        <dd class="col-sm-9">@courseEnrollment.Grade</dd>
+                        <dt class="col-sm-3">Seminar URL</dt>
+                        <dd class="col-sm-9">
+                            @if (!string.IsNullOrEmpty(courseEnrollment.SeminarUrl))
+                            {
+                                <a href="@courseEnrollment.SeminarUrl" target="_blank">Download</a>
+                            }
+                        </dd>
+                        <dt class="col-sm-3">Project URL</dt>
+                        <dd class="col-sm-9">
+                            @if (!string.IsNullOrEmpty(courseEnrollment.ProjectUrl))
+                            {
+                                <a href="@courseEnrollment.ProjectUrl" target="_blank">View</a>
+                            }
+                        </dd>
+                        <dt class="col-sm-3">Finish Date</dt>
+                        <dd class="col-sm-9">@courseEnrollment.FinishDate?.ToString("yyyy-MM-dd")</dd>
+                    </dl>
+                    <form asp-controller="Enrollments" asp-action="UpdatePoints" method="post" id="teacherEditForm" class="row g-3 mt-3" style="display:none;">
+                        <input type="hidden" name="EnrollmentId" value="@courseEnrollment.Id" />
+                        <input type="hidden" name="StudentId" value="@courseEnrollment.StudentId" />
+                        <input type="hidden" name="CourseId" value="@courseEnrollment.CourseId" />
+
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Exam Points</label>
+                            <input type="number" name="ExamPoints" class="form-control" value="@courseEnrollment.ExamPoints" min="0" />
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Seminar Points</label>
+                            <input type="number" name="SeminarPoints" class="form-control" value="@courseEnrollment.SeminarPoints" min="0" />
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Project Points</label>
+                            <input type="number" name="ProjectPoints" class="form-control" value="@courseEnrollment.ProjectPoints" min="0" />
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Additional Points</label>
+                            <input type="number" name="AdditionalPoints" class="form-control" value="@courseEnrollment.AdditionalPoints" min="0" />
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Grade</label>
+                            <input type="number" name="Grade" class="form-control" value="@courseEnrollment.Grade" min="5" max="10" />
+                        </div>
+                        <div class="col-md-6 mb-2">
+                            <label class="form-label">Finish Date</label>
+                            <input type="date" name="FinishDate" class="form-control" value="@(courseEnrollment.FinishDate?.ToString("yyyy-MM-dd"))" />
+                        </div>
+                        <div class="col-12 mt-2">
+                            <button type="submit" class="btn btn-custom">Save</button>
+                        </div>
+                    </form>
+                }
+                else
+                {
+                    <dl class="row info-list mb-0">
+                        <dt class="col-sm-3">Semester</dt>
+                        <dd class="col-sm-9">@courseEnrollment.Semester</dd>
+                        <dt class="col-sm-3">Year</dt>
+                        <dd class="col-sm-9">@courseEnrollment.Year</dd>
+                        <dt class="col-sm-3">Exam Points</dt>
+                        <dd class="col-sm-9">@courseEnrollment.ExamPoints</dd>
+                        <dt class="col-sm-3">Seminar Points</dt>
+                        <dd class="col-sm-9">@courseEnrollment.SeminarPoints</dd>
+                        <dt class="col-sm-3">Project Points</dt>
+                        <dd class="col-sm-9">@courseEnrollment.ProjectPoints</dd>
+                        <dt class="col-sm-3">Additional Points</dt>
+                        <dd class="col-sm-9">@courseEnrollment.AdditionalPoints</dd>
+                        <dt class="col-sm-3">Grade</dt>
+                        <dd class="col-sm-9">@courseEnrollment.Grade</dd>
+                        <dt class="col-sm-3">Seminar URL</dt>
+                        <dd class="col-sm-9">
+                            @if (!string.IsNullOrEmpty(courseEnrollment.SeminarUrl))
+                            {
+                                <a href="@courseEnrollment.SeminarUrl" target="_blank">Download</a>
+                            }
+                        </dd>
+                        <dt class="col-sm-3">Project URL</dt>
+                        <dd class="col-sm-9">
+                            @if (!string.IsNullOrEmpty(courseEnrollment.ProjectUrl))
+                            {
+                                <a href="@courseEnrollment.ProjectUrl" target="_blank">View</a>
+                            }
+                        </dd>
+                        <dt class="col-sm-3">Finish Date</dt>
+                        <dd class="col-sm-9">@courseEnrollment.FinishDate?.ToString("yyyy-MM-dd")</dd>
+                    </dl>
                 }
             </div>
-        }
-        else
-        {
-            <p class="text-muted mt-3">This student is not enrolled in any courses yet.</p>
-        }
-    </div>
+        </div>
+    }
 </div>
+
+<script>
+    function toggleTeacherEditForm() {
+        var form = document.getElementById("teacherEditForm");
+        form.style.display = (form.style.display === "none" || form.style.display === "") ? "flex" : "none";
+    }
+</script>

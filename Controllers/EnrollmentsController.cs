@@ -228,6 +228,30 @@ namespace UniversityPortal.Controllers
             return RedirectToAction("Details", "Courses", new { id = enrollment.CourseId });
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> UpdatePoints(long EnrollmentId, int? ExamPoints, int? SeminarPoints, int? ProjectPoints, int? AdditionalPoints, int? Grade, DateOnly? FinishDate, string StudentId, int CourseId)
+        {
+            var enrollment = await _context.Enrollments.FindAsync(EnrollmentId);
+            if (enrollment == null)
+                return NotFound();
+
+            // Update only allowed fields
+            enrollment.ExamPoints = ExamPoints;
+            enrollment.SeminarPoints = SeminarPoints;
+            enrollment.ProjectPoints = ProjectPoints;
+            enrollment.AdditionalPoints = AdditionalPoints;
+            enrollment.Grade = Grade;
+            enrollment.FinishDate = FinishDate;
+
+            await _context.SaveChangesAsync();
+
+            // Redirect back to the student details, preserving course context
+            return RedirectToAction("Details", "Students", new { id = StudentId, courseId = CourseId });
+        }
+
+
         private bool EnrollmentExists(long id)
         {
             return _context.Enrollments.Any(e => e.Id == id);

@@ -53,7 +53,7 @@ namespace UniversityPortal.Controllers
         }
 
         // GET: Students/Details/5
-        public async Task<IActionResult> Details(string? id)
+        public async Task<IActionResult> Details(string? id, int? courseId)
         {
             if (id == null)
             {
@@ -68,6 +68,15 @@ namespace UniversityPortal.Controllers
             if (student == null)
             {
                 return NotFound();
+            }
+
+            if(courseId != null)
+            {
+                var enrollment = await _context.Enrollments
+                    .Include(c => c.Course)
+                    .FirstOrDefaultAsync(c => c.StudentId == id && c.CourseId == courseId);
+
+                ViewData["CourseEnrollment"] = enrollment;
             }
 
             return View(student);
