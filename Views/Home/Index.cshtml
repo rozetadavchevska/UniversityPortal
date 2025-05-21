@@ -3,6 +3,88 @@
     ViewData["Title"] = "Dashboard";
 }
 
+<style>
+    .dashboard-section {
+        padding: 2.5rem 2rem 2rem 2rem;
+    }
+
+    .dashboard-title {
+        color: #213555;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .dashboard-desc {
+        margin-bottom: 2rem;
+        font-size: 1.1rem;
+    }
+
+    .dashboard-cards {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+        gap: 2rem;
+    }
+
+    .dashboard-card {
+        background: #fff;
+        border-radius: 1.25rem;
+        box-shadow: 0 2px 12px rgba(33,53,85,0.08);
+        padding: 2rem 1.5rem 1.5rem 1.5rem;
+        text-align: center;
+        transition: transform 0.15s, box-shadow 0.15s;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        min-height: 200px;
+    }
+
+        .dashboard-card:hover {
+            transform: translateY(-6px) scale(1.03);
+            box-shadow: 0 8px 32px rgba(33,53,85,0.13);
+            z-index: 2;
+        }
+
+        .dashboard-card .icon {
+            font-size: 2.2rem;
+            margin-bottom: 1.2rem;
+            color: #fff;
+            background: #213555;
+            border-radius: 0.75rem;
+            padding: 0.7rem 1rem;
+            display: inline-block;
+        }
+
+        .dashboard-card h5 {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #213555;
+            font-size: 1.2rem;
+        }
+
+        .dashboard-card p {
+            color: #6c757d;
+            margin-bottom: 1.2rem;
+            font-size: 1rem;
+        }
+
+        .dashboard-card .btn {
+            border-radius: 50px;
+            padding: 0.5rem 1.5rem;
+            font-weight: 600;
+            font-size: 1rem;
+            background: #213555;
+            color: #fff;
+            border: none;
+            transition: background 0.15s;
+        }
+
+            .dashboard-card .btn:hover {
+                background: #3e5879;
+                color: #fff;
+            }
+</style>
+
+
 <div class="container-fluid" style="height: 100%;">
     @if (!User.Identity.IsAuthenticated)
     {
@@ -21,100 +103,59 @@
             </div>
         </div>
     }
-
     else if (User.IsInRole("Admin"))
     {
-        <div class="row mb-4">
-            <div class="col">
-                <h1 class="fw-bold">Admin Dashboard</h1>
-                <p class="text-muted">Manage everything from one place: Students, Teachers, Courses, and Enrollments.</p>
-            </div>
-        </div>
-        <div class="row g-4">
-            <div class="col-md-3">
-                <div class="card text-center p-3">
-                    <i class="fas fa-user-graduate fa-2x text-primary mb-2"></i>
+        <div class="dashboard-section">
+            <h1 class="dashboard-title">Admin Dashboard</h1>
+            <p class="dashboard-desc">Manage everything from one place: Students, Teachers, Courses, and Enrollments.</p>
+            <div class="dashboard-cards">
+                <div class="dashboard-card">
+                    <span class="icon"><i class="fas fa-user-graduate"></i></span>
                     <h5>Students</h5>
-                    <p>Manage student records</p>
-                    <a href="/Students" class="btn btn-outline-primary btn-sm">Go</a>
+                    <p>Manage student records and information.</p>
+                    <a href="/Students" class="btn">Go</a>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center p-3">
-                    <i class="fas fa-chalkboard-teacher fa-2x text-success mb-2"></i>
+                <div class="dashboard-card">
+                    <span class="icon"><i class="fas fa-chalkboard-teacher"></i></span>
                     <h5>Teachers</h5>
-                    <p>Manage teaching staff</p>
-                    <a href="/Teachers" class="btn btn-outline-success btn-sm">Go</a>
+                    <p>Manage teaching staff and assignments.</p>
+                    <a href="/Teachers" class="btn">Go</a>
                 </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center p-3">
-                    <i class="fas fa-book fa-2x text-warning mb-2"></i>
+                <div class="dashboard-card">
+                    <span class="icon"><i class="fas fa-book"></i></span>
                     <h5>Courses</h5>
-                    <p>Manage course offerings</p>
-                    <a href="/Courses" class="btn btn-outline-warning btn-sm">Go</a>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-center p-3">
-                    <i class="fas fa-file-alt fa-2x text-danger mb-2"></i>
-                    <h5>Enrollments</h5>
-                    <p>Track student enrollments</p>
-                    <a href="/Enrollments" class="btn btn-outline-danger btn-sm">Go</a>
+                    <p>Manage course offerings and schedules.</p>
+                    <a href="/Courses" class="btn">Go</a>
                 </div>
             </div>
         </div>
     }
     else if (User.IsInRole("Teacher"))
     {
-        <div class="row mb-4">
-            <div class="col">
-                <h1 class="fw-bold">Teacher Dashboard</h1>
-                <p class="text-muted">View and manage your courses and enrolled students.</p>
-            </div>
-        </div>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card text-center p-3">
-                    <i class="fas fa-book fa-2x text-warning mb-2"></i>
+        <div class="dashboard-section">
+            <h1 class="dashboard-title">Teacher Dashboard</h1>
+            <p class="dashboard-desc">View and manage your courses and enrolled students.</p>
+            <div class="dashboard-cards">
+                <div class="dashboard-card">
+                    <span class="icon"><i class="fas fa-book"></i></span>
                     <h5>My Courses</h5>
-                    <p>View and manage your courses</p>
-                    <a href="/Courses/MyCourses" class="btn btn-outline-warning btn-sm">Go</a>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card text-center p-3">
-                    <i class="fas fa-user-graduate fa-2x text-primary mb-2"></i>
-                    <h5>Enrolled Students</h5>
-                    <p>View students enrolled in your courses</p>
-                    <a href="/Enrollments/MyEnrollments" class="btn btn-outline-primary btn-sm">Go</a>
+                    <p>View and manage your courses.</p>
+                    <a href="/Courses" class="btn">Go</a>
                 </div>
             </div>
         </div>
     }
     else if (User.IsInRole("Student"))
     {
-        <div class="row mb-4">
-            <div class="col">
-                <h1 class="fw-bold">Student Dashboard</h1>
-                <p class="text-muted">View your courses, grades, and progress.</p>
-            </div>
-        </div>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="card text-center p-3">
-                    <i class="fas fa-book fa-2x text-warning mb-2"></i>
+        <div class="dashboard-section">
+            <h1 class="dashboard-title">Student Dashboard</h1>
+            <p class="dashboard-desc">View your courses, grades, and progress.</p>
+            <div class="dashboard-cards">
+                <div class="dashboard-card">
+                    <span class="icon"><i class="fas fa-book"></i></span>
                     <h5>My Courses</h5>
-                    <p>View your enrolled courses</p>
-                    <a href="/Courses/MyCourses" class="btn btn-outline-warning btn-sm">Go</a>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="card text-center p-3">
-                    <i class="fas fa-file-alt fa-2x text-danger mb-2"></i>
-                    <h5>My Enrollments</h5>
-                    <p>Track your enrollment status</p>
-                    <a href="/Enrollments/MyEnrollments" class="btn btn-outline-danger btn-sm">Go</a>
+                    <p>View your enrolled courses.</p>
+                    <a href="/Courses" class="btn">Go</a>
                 </div>
             </div>
         </div>

@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = $"{Model.FirstName} {Model.LastName}";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var returnUrl = ViewData["ReturnUrl"] as string;
 }
 
 <style>
@@ -113,7 +114,14 @@
 <div class="container">
     <div class="profile-header">
         <div class="left-action">
-            <a asp-action="Index" class="btn btn-outline-secondary">← Back</a>
+            @if (!string.IsNullOrEmpty(returnUrl))
+            {
+                <a href="@returnUrl" class="btn btn-outline-secondary">← Back</a>
+            }
+            else
+            {
+                <a asp-action="Index" class="btn btn-outline-secondary">← Back</a>
+            }
         </div>
         <div class="profile-name">
             <h1>@Model.FirstName @Model.LastName</h1>

@@ -59,7 +59,7 @@ namespace UniversityPortal.Controllers
         }
 
         // GET: Teachers/Details/5
-        public async Task<IActionResult> Details(string? id)
+        public async Task<IActionResult> Details(string? id, string? returnUrl)
         {
             if (id == null)
             {
@@ -75,6 +75,7 @@ namespace UniversityPortal.Controllers
                 return NotFound();
             }
 
+            ViewData["ReturnUrl"] = returnUrl;
             return View(teacher);
         }
 

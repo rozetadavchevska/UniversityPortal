@@ -56,7 +56,7 @@ namespace UniversityPortal.Controllers
         }
 
         // GET: Students/Details/5
-        public async Task<IActionResult> Details(string? id, int? courseId)
+        public async Task<IActionResult> Details(string? id, int? courseId, string? returnUrl)
         {
             if (id == null)
             {
@@ -82,6 +82,7 @@ namespace UniversityPortal.Controllers
                 ViewData["CourseEnrollment"] = enrollment;
             }
 
+            ViewData["ReturnUrl"] = returnUrl;
             return View(student);
         }
 

@@ -66,8 +66,10 @@
             }
 
         footer {
-            background-color: #213555;
-            color: #F1F0E8;
+            background-color: #F1F0E8;
+            color: #213555;
+            flex-shrink: 0;
+            border-top: 1px solid #e0e0e0;
         }
 
         .card {
@@ -128,8 +130,10 @@
     </div>
 
     <footer class="text-center p-3 mt-5">
-        &copy; 2025 - University Portal - <a class="text-decoration-none text-light" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+        &copy; 2025 - University Portal -
+        <a class="text-decoration-none" style="color: #213555;" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
     </footer>
+
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
