@@ -131,6 +131,12 @@
             background-color: #3E5879;
             color: #F1F0E8;
         }
+
+    .person-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 70px;
+    }
 </style>
 
 <div class="container mt-4">
@@ -154,6 +160,12 @@
             @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
             {
                 <img src="@Model.ProfileImageUrl" alt="Profile Image" style="width: 140px; height: 140px; object-fit: cover; border-radius: 50%;  border: 3px solid #3E5879;" />
+            }
+            else
+            {
+                <div style="width:140px; height:140px; background:#eee; border-radius:50%; margin-right:18px; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:1.5rem; border:2px solid #3E5879;">
+                    <span class="material-symbols-outlined person-icon">person</span>
+                </div>
             }
         </div>
         <dl class="row w-100 mb-0">

@@ -112,7 +112,7 @@ namespace UniversityPortal.Controllers
             else if (User.IsInRole("Teacher"))
             {
                 course.Enrollments = course.Enrollments
-                    .Where(e => e.Year == selectedYear && e.FinishDate == null)
+                    .Where(e => e.Year == selectedYear)
                     .ToList();
             }
 
@@ -316,7 +316,7 @@ namespace UniversityPortal.Controllers
                     {
                         StudentId = student.Id,
                         FullName = student.FirstName + " " + student.LastName,
-                        IsEnrolled = enrollment != null,
+                        IsEnrolled = enrollment != null && enrollment.FinishDate == null,
                         Grade = enrollment?.Grade,
                         Semester = enrollment?.Semester,
                         Year = enrollment?.Year,
@@ -339,35 +339,42 @@ namespace UniversityPortal.Controllers
         {
             var course = await _context.Courses
                 .Include(c => c.Enrollments)
+                    .ThenInclude(e => e.Student)
                 .FirstOrDefaultAsync(c => c.Id == model.CourseId);
 
             if (course == null) return NotFound();
 
-            _context.Enrollments.RemoveRange(course.Enrollments);
-
             foreach (var student in model.Students)
             {
-                if (student.IsEnrolled)
+                var existingEnrollment = course.Enrollments.FirstOrDefault(e => e.StudentId == student.StudentId);
+
+                if (existingEnrollment != null)
+                {
+                    if (student.IsEnrolled)
+                    {
+                        existingEnrollment.Semester = student.Semester;
+                        existingEnrollment.Year = student.Year;
+                        existingEnrollment.FinishDate = student.FinishDate;
+                    }
+                    else
+                    {
+                        if (existingEnrollment.FinishDate == null)
+                            existingEnrollment.FinishDate = DateOnly.FromDateTime(DateTime.Today);
+                    }
+                }
+                else if (student.IsEnrolled)
                 {
                     var enrollment = new Enrollment
                     {
                         CourseId = model.CourseId,
                         StudentId = student.StudentId,
-                        Grade = student.Grade,
                         Semester = student.Semester,
-                        Year = student.Year,
-                        SeminarUrl = student.SeminarUrl,
-                        ProjectUrl = student.ProjectUrl,
-                        ExamPoints = student.ExamPoints,
-                        SeminarPoints = student.SeminarPoints,
-                        ProjectPoints = student.ProjectPoints,
-                        AdditionalPoints = student.AdditionalPoints,
-                        FinishDate = student.FinishDate
+                        Year = student.Year
                     };
-
                     _context.Enrollments.Add(enrollment);
                 }
             }
+            await _context.SaveChangesAsync();
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Details), new { id = model.CourseId });

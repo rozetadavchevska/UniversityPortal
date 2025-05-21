@@ -102,6 +102,12 @@
         padding: 6px 12px;
         border-radius: 50px;
     }
+
+    .person-icon {
+        width: 70px;
+        height: 70px;
+        font-size: 70px;
+    }
 </style>
 
 <div class="container">
@@ -112,9 +118,12 @@
         <div class="profile-name">
             <h1>@Model.FirstName @Model.LastName</h1>
         </div>
-        <div class="right-action">
-            <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom">Edit</a>
-        </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="right-action">
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-custom">Edit</a>
+            </div>
+        }
     </div>
 
 
@@ -123,6 +132,12 @@
             @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
             {
                 <img src="@Model.ProfileImageUrl" alt="Profile Image" style="width: 140px; height: 140px; object-fit: cover; border-radius: 50%; margin-bottom: 15px; border: 3px solid #3E5879;" />
+            }
+            else
+            {
+                <div style="width:140px; height:140px; background:#eee; border-radius:50%; margin-right:18px; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:1.5rem; border:2px solid #3E5879;">
+                    <span class="material-symbols-outlined person-icon">person</span>
+                </div>
             }
         </div>
         <dl class="row info-list w-100 mb-0">
