@@ -149,8 +149,14 @@
         }
     </div>
 
-    <div class="details-box mt-3">
-        <dl class="row">
+    <div class="details-box mt-3 d-flex gap-5">
+        <div>
+            @if (!string.IsNullOrEmpty(Model.ProfileImageUrl))
+            {
+                <img src="@Model.ProfileImageUrl" alt="Profile Image" style="width: 140px; height: 140px; object-fit: cover; border-radius: 50%;  border: 3px solid #3E5879;" />
+            }
+        </div>
+        <dl class="row w-100 mb-0">
             <dt class="col-sm-3">@Html.DisplayNameFor(model => model.StudentId)</dt>
             <dd class="col-sm-9">@Html.DisplayFor(model => model.StudentId)</dd>
 
@@ -171,7 +177,7 @@
         </dl>
     </div>
 
-    @if (User.IsInRole("Student"))
+    @if (User.IsInRole("Student") || User.IsInRole("Admin"))
     {
         <div class="courses-section">
             <h4>Enrolled Courses</h4>

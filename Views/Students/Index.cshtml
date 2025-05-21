@@ -191,6 +191,16 @@
         {
             <div class="col-md-4">
                 <div class="student-card">
+                    @if (!string.IsNullOrEmpty(student.ProfileImageUrl))
+                    {
+                        <img src="@student.ProfileImageUrl" alt="Profile Image" style="width:64px; height:64px; object-fit:cover; border-radius:50%; margin-right:18px; border:2px solid #3E5879;" />
+                    }
+                    else
+                    {
+                        <div style="width:64px; height:64px; background:#eee; border-radius:50%; margin-right:18px; display:flex; align-items:center; justify-content:center; color:#aaa; font-size:1.5rem; border:2px solid #3E5879;">
+                            <span class="material-symbols-outlined">person</span>
+                        </div>
+                    }
                     <div class="student-details">
                         <a asp-action="Details" asp-route-id="@student.Id" class="student-name">@student.FirstName @student.LastName</a>
                         <div class="student-meta">

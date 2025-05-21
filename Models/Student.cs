@@ -26,6 +26,8 @@ namespace UniversityPortal.Models
         [Display(Name = "Education Level")]
         [StringLength(25)]
         public string? EducationLevel { get; set; }
+        [Display(Name = "Profile Image")]
+        public string? ProfileImageUrl { get; set; }
 
         public ICollection<Enrollment>? Enrollments { get; set; }
     }

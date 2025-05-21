@@ -17,11 +17,13 @@ namespace UniversityPortal.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public TeachersController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public TeachersController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _userManager = userManager;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Teachers
@@ -87,7 +89,7 @@ namespace UniversityPortal.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(Teacher teacher, string email, string password)
+        public async Task<IActionResult> Create(Teacher teacher, string email, string password, IFormFile ProfileImage)
         {
             var user = new IdentityUser
             {
@@ -110,14 +112,34 @@ namespace UniversityPortal.Controllers
 
             teacher.Id = user.Id;
 
+            if (ProfileImage != null && ProfileImage.Length > 0)
+            {
+                var uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images/profile-images/teachers");
+
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+
+                var fileName = teacher.FirstName + "_" + teacher.LastName + Path.GetExtension(ProfileImage.FileName);
+                var filePath = Path.Combine(uploadFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await ProfileImage.CopyToAsync(stream);
+                }
+
+                teacher.ProfileImageUrl = "images/profile-images/teachers" + fileName;
+            }
+
             _context.Add(teacher);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Details), new { id = teacher.Id });
         }
 
         // GET: Teachers/Edit/5
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string? id)
         {
             if (id == null)
             {
@@ -136,34 +158,71 @@ namespace UniversityPortal.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Edit(string id, Teacher teacher)
+        public async Task<IActionResult> Edit(string id, Teacher teacher, IFormFile ProfileImage)
         {
             if (id != teacher.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
+                var existingTeacher = await _context.Teachers.AsNoTracking().FirstOrDefaultAsync(b => b.Id == id);
+
+                if (existingTeacher == null)
                 {
-                    _context.Update(teacher);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+
+                if (ProfileImage != null && ProfileImage.Length > 0)
                 {
-                    if (!TeacherExists(teacher.Id))
+                    var uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images/profile-images/teachers");
+
+                    if (!Directory.Exists(uploadFolder))
                     {
-                        return NotFound();
+                        Directory.CreateDirectory(uploadFolder);
                     }
-                    else
+
+                    var fileName = teacher.FirstName + "_" + teacher.LastName + Path.GetExtension(ProfileImage.FileName);
+                    var filePath = Path.Combine(uploadFolder, fileName);
+
+                    if (!string.IsNullOrEmpty(teacher.ProfileImageUrl))
                     {
-                        throw;
+                        string existingFilePath = Path.Combine(_webHostEnvironment.WebRootPath, teacher.ProfileImageUrl.TrimStart('/'));
+                        if (System.IO.File.Exists(existingFilePath))
+                        {
+                            System.IO.File.Delete(existingFilePath);
+                        }
                     }
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ProfileImage.CopyToAsync(stream);
+                    }
+
+                    teacher.ProfileImageUrl = "/images/profile-images/teachers/" + fileName;
                 }
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    teacher.ProfileImageUrl = existingTeacher.ProfileImageUrl;
+                }
+
+                _context.Update(teacher);
+                await _context.SaveChangesAsync();
             }
-            return View(teacher);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!TeacherExists(teacher.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToAction(nameof(Details), new { id = teacher.Id });
         }
 
         // GET: Teachers/Delete/5

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using NuGet.DependencyResolver;
 using UniversityPortal.Areas.Identity.Data;
 using UniversityPortal.Models;
 using UniversityPortal.ViewModels;
@@ -18,11 +19,13 @@ namespace UniversityPortal.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public StudentsController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public StudentsController(ApplicationDbContext context, UserManager<IdentityUser> userManager, IWebHostEnvironment webHostEnvironment)
         {
             _context = context;
             _userManager = userManager;
+            _webHostEnvironment = webHostEnvironment;
         }
 
         // GET: Students
@@ -70,7 +73,7 @@ namespace UniversityPortal.Controllers
                 return NotFound();
             }
 
-            if(courseId != null)
+            if (courseId != null)
             {
                 var enrollment = await _context.Enrollments
                     .Include(c => c.Course)
@@ -93,7 +96,7 @@ namespace UniversityPortal.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [Authorize(Roles = "Admin")]
-        public async Task<IActionResult> Create(Student student, string email, string password)
+        public async Task<IActionResult> Create(Student student, string email, string password, IFormFile ProfileImage)
         {
             var user = new IdentityUser
             {
@@ -116,13 +119,34 @@ namespace UniversityPortal.Controllers
 
             student.Id = user.Id;
 
+            if (ProfileImage != null && ProfileImage.Length > 0)
+            {
+                var uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images/profile-images/students");
+
+                if (!Directory.Exists(uploadFolder))
+                {
+                    Directory.CreateDirectory(uploadFolder);
+                }
+
+                var fileName = student.FirstName + "_" + student.LastName + Path.GetExtension(ProfileImage.FileName);
+                var filePath = Path.Combine(uploadFolder, fileName);
+
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await ProfileImage.CopyToAsync(stream);
+                }
+
+                student.ProfileImageUrl = "/images/profile-images/students/" + fileName;
+            }
+
             _context.Add(student);
             await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction(nameof(Details), new { id = student.Id });
         }
 
         // GET: Students/Edit/5
-        public async Task<IActionResult> Edit(long? id)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(string? id)
         {
             if (id == null)
             {
@@ -140,34 +164,72 @@ namespace UniversityPortal.Controllers
         // POST: Students/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, Student student)
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> Edit(string id, Student student, IFormFile ProfileImage)
         {
             if (id != student.Id)
             {
                 return NotFound();
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
+                var existingStudent = await _context.Students.AsNoTracking().FirstOrDefaultAsync(b => b.Id == id);
+
+                if (existingStudent == null)
                 {
-                    _context.Update(student);
-                    await _context.SaveChangesAsync();
+                    return NotFound();
                 }
-                catch (DbUpdateConcurrencyException)
+
+                if (ProfileImage != null && ProfileImage.Length > 0)
                 {
-                    if (!StudentExists(student.Id))
+                    var uploadFolder = Path.Combine(_webHostEnvironment.WebRootPath, "images/profile-images/students");
+
+                    if (!Directory.Exists(uploadFolder))
                     {
-                        return NotFound();
+                        Directory.CreateDirectory(uploadFolder);
                     }
-                    else
+
+                    var fileName = student.FirstName + "_" + student.LastName + Path.GetExtension(ProfileImage.FileName);
+                    var filePath = Path.Combine(uploadFolder, fileName);
+
+                    if (!string.IsNullOrEmpty(student.ProfileImageUrl))
                     {
-                        throw;
+                        string existingFilePath = Path.Combine(_webHostEnvironment.WebRootPath, student.ProfileImageUrl.TrimStart('/'));
+                        if (System.IO.File.Exists(existingFilePath))
+                        {
+                            System.IO.File.Delete(existingFilePath);
+                        }
                     }
+
+                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    {
+                        await ProfileImage.CopyToAsync(stream);
+                    }
+
+                    student.ProfileImageUrl = "/images/profile-images/students/" + fileName;
                 }
-                return RedirectToAction(nameof(Index));
+                else
+                {
+                    student.ProfileImageUrl = existingStudent.ProfileImageUrl;
+                }
+
+                _context.Update(student);
+                await _context.SaveChangesAsync();
             }
-            return View(student);
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!StudentExists(student.Id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return RedirectToAction(nameof(Details), new { id = student.Id });
         }
 
         // GET: Students/Delete/5

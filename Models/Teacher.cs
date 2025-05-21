@@ -23,7 +23,9 @@ namespace UniversityPortal.Models
         public string? OfficeNumber { get; set; }
         [Display(Name = "Hire Date")]
         public DateOnly? HireDate { get; set; }
-        
+        [Display(Name = "Profile Image")]
+        public string? ProfileImageUrl { get; set; }
+
         public ICollection<Course>? FirstTeacherCourses { get; set; }
         public ICollection<Course>? SecondTeacherCourses { get; set; }
     }
