@@ -130,7 +130,7 @@ namespace UniversityPortal.Controllers
                     await ProfileImage.CopyToAsync(stream);
                 }
 
-                teacher.ProfileImageUrl = "images/profile-images/teachers" + fileName;
+                teacher.ProfileImageUrl = "/images/profile-images/teachers/" + fileName;
             }
 
             _context.Add(teacher);
