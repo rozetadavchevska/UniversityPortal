@@ -262,52 +262,77 @@
 
                         <dt class="col-sm-3">Seminar URL</dt>
                         <dd class="col-sm-9">
-                            @if (!string.IsNullOrEmpty(studentEnrollment?.SeminarUrl))
+                            @if (studentEnrollment.FinishDate == null)
                             {
-                                <a href="@studentEnrollment.SeminarUrl" target="_blank">@fileName</a>
-                                <button type="button" class="btn btn-sm btn-custom-toggle ms-2" onclick="toggleSeminarForm()">Update</button>
-
-                                <form asp-controller="Enrollments" asp-action="AttachSeminarFile" method="post" enctype="multipart/form-data" id="seminarForm" class="align-items-center gap-2 mt-2" style="display:none;">
-                                    <input type="hidden" name="studentFullName" value="@($"{studentEnrollment.Student.FirstName} {studentEnrollment.Student.LastName}")" />
-                                    <input type="hidden" name="enrollmentId" value="@studentEnrollment.Id" />
-                                    <input type="file" name="file" class="form-control w-50" accept=".doc,.docx,.pdf" />
-                                    <button type="submit" class="btn btn-custom-toggle">Update File</button>
-                                </form>
+                                if (!string.IsNullOrEmpty(studentEnrollment?.SeminarUrl))
+                                {
+                                    <a href="@studentEnrollment.SeminarUrl" target="_blank">@fileName</a>
+                                    <button type="button" class="btn btn-sm btn-custom-toggle ms-2" onclick="toggleSeminarForm()">Update</button>
+                                    <form asp-controller="Enrollments" asp-action="AttachSeminarFile" method="post" enctype="multipart/form-data" id="seminarForm" class="align-items-center gap-2 mt-2" style="display:none;">
+                                        <input type="hidden" name="studentFullName" value="@($"{studentEnrollment.Student.FirstName} {studentEnrollment.Student.LastName}")" />
+                                        <input type="hidden" name="enrollmentId" value="@studentEnrollment.Id" />
+                                        <input type="file" name="file" class="form-control w-50" accept=".doc,.docx,.pdf" />
+                                        <button type="submit" class="btn btn-custom-toggle">Update File</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-controller="Enrollments" asp-action="AttachSeminarFile" method="post" enctype="multipart/form-data" class="d-flex align-items-center gap-2">
+                                        <input type="hidden" name="studentFullName" value="@($"{studentEnrollment.Student.FirstName} {studentEnrollment.Student.LastName}")" />
+                                        <input type="hidden" name="enrollmentId" value="@studentEnrollment.Id" />
+                                        <input type="file" name="file" class="form-control w-50" accept=".doc,.docx,.pdf" />
+                                        <button type="submit" class="btn btn-custom">Upload</button>
+                                    </form>
+                                }
                             }
                             else
                             {
-                                <form asp-controller="Enrollments" asp-action="AttachSeminarFile" method="post" enctype="multipart/form-data" class="d-flex align-items-center gap-2">
-                                    <input type="hidden" name="studentFullName" value="@($"{studentEnrollment.Student.FirstName} {studentEnrollment.Student.LastName}")" />
-                                    <input type="hidden" name="enrollmentId" value="@studentEnrollment.Id" />
-                                    <input type="file" name="file" class="form-control w-50" accept=".doc,.docx,.pdf" />
-                                    <button type="submit" class="btn btn-custom">Upload</button>
-                                </form>
+                                if (!string.IsNullOrEmpty(studentEnrollment?.SeminarUrl))
+                                {
+                                    <a href="@studentEnrollment.SeminarUrl" target="_blank">@fileName</a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No seminar file attached.</span>
+                                }
                             }
                         </dd>
 
                         <dt class="col-sm-3">Project URL</dt>
                         <dd class="col-sm-9">
-                            @if (!string.IsNullOrEmpty(studentEnrollment?.ProjectUrl))
+                            @if (studentEnrollment.FinishDate == null)
                             {
-                                <a href="@studentEnrollment.ProjectUrl" target="_blank">@studentEnrollment.ProjectUrl</a>
-                                <button type="button" class="btn btn-sm btn-custom-toggle ms-2" onclick="toggleProjectForm()">Update</button>
-
-                                <form asp-controller="Enrollments" asp-action="AttachProjectUrl" method="post" id="projectForm" class="align-items-center gap-2 mt-2" style="display:none;">
-                                    <input type="hidden" name="enrollmentId" value="@studentEnrollment.Id" />
-                                    <input type="url" name="projectUrl" class="form-control w-50" placeholder="Enter new project URL" required />
-                                    <button type="submit" class="btn btn-custom">Update URL</button>
-                                </form>
+                                if (!string.IsNullOrEmpty(studentEnrollment?.ProjectUrl))
+                                {
+                                    <a href="@studentEnrollment.ProjectUrl" target="_blank">@studentEnrollment.ProjectUrl</a>
+                                    <button type="button" class="btn btn-sm btn-custom-toggle ms-2" onclick="toggleProjectForm()">Update</button>
+                                    <form asp-controller="Enrollments" asp-action="AttachProjectUrl" method="post" id="projectForm" class="align-items-center gap-2 mt-2" style="display:none;">
+                                        <input type="hidden" name="enrollmentId" value="@studentEnrollment.Id" />
+                                        <input type="url" name="projectUrl" class="form-control w-50" placeholder="Enter new project URL" required />
+                                        <button type="submit" class="btn btn-custom">Update URL</button>
+                                    </form>
+                                }
+                                else
+                                {
+                                    <form asp-controller="Enrollments" asp-action="AttachProjectUrl" method="post" class="d-flex align-items-center gap-2">
+                                        <input type="hidden" name="enrollmentId" value="@studentEnrollment.Id" />
+                                        <input type="url" name="projectUrl" class="form-control d-inline w-50" required />
+                                        <button type="submit" class="btn btn-custom">Submit</button>
+                                    </form>
+                                }
                             }
                             else
                             {
-                                <form asp-controller="Enrollments" asp-action="AttachProjectUrl" method="post" class="d-flex align-items-center gap-2">
-                                    <input type="hidden" name="enrollmentId" value="@studentEnrollment.Id" />
-                                    <input type="url" name="projectUrl" class="form-control d-inline w-50" required />
-                                    <button type="submit" class="btn btn-custom">Submit</button>
-                                </form>
+                                if (!string.IsNullOrEmpty(studentEnrollment?.ProjectUrl))
+                                {
+                                    <a href="@studentEnrollment.ProjectUrl" target="_blank">@studentEnrollment.ProjectUrl</a>
+                                }
+                                else
+                                {
+                                    <span class="text-muted">No project URL attached.</span>
+                                }
                             }
                         </dd>
-
 
                         <dt class="col-sm-3">Finish Date</dt>
                         <dd class="col-sm-9">@studentEnrollment.FinishDate?.ToString("yyyy-MM-dd")</dd>

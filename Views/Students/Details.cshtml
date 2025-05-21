@@ -325,12 +325,22 @@
                             {
                                 <a href="@courseEnrollment.SeminarUrl" target="_blank">Download</a>
                             }
+                            else
+                            {
+                                <span class="text-muted">No seminar file attached.</span>
+
+                            }
                         </dd>
                         <dt class="col-sm-3">Project URL</dt>
                         <dd class="col-sm-9">
                             @if (!string.IsNullOrEmpty(courseEnrollment.ProjectUrl))
                             {
                                 <a href="@courseEnrollment.ProjectUrl" target="_blank">View</a>
+                            }
+                            else
+                            {
+                                <span class="text-muted">No project URL attached.</span>
+
                             }
                         </dd>
                         <dt class="col-sm-3">Finish Date</dt>
